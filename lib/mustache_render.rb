@@ -1,0 +1,2 @@
+module MustacheRender
+end
