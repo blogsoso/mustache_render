@@ -1,5 +1,14 @@
 # -*- encoding : utf-8 -*-
+require 'mustache_render/config'
+
 module MustacheRender
+
+  module Manager
+    autoload :BaseController,      'mustache_render/controllers/mustache_render/manager/base_controller'
+    autoload :FoldersController,   'mustache_render/controllers/mustache_render/manager/folders_controller'
+    autoload :TemplatesController, 'mustache_render/controllers/mustache_render/manager/templates_controller'
+  end
+
   module CoreExt
     autoload :MustacheExt,       'mustache_render/core_ext/mustache_ext'
     autoload :BaseControllerExt, 'mustache_render/core_ext/base_controller_ext'

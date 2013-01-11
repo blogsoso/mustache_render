@@ -1,0 +1,9 @@
+<h1>模板文件夹列表</h1>
+
+<%= link_to '新建', new_mustache_render_manager_folder_url %>
+
+<% MustacheRenderFolder.nested_set_options do |folder| %>
+  <div>
+    <%= link_to h("#{'- ' * folder.level}#{folder.name}"), mustache_render_manager_folder_url(:id => folder.id) %>
+  </div>
+<% end %>
