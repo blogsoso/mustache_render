@@ -10,7 +10,11 @@
 
 <div>
   <div class='field'>
-    <b>全路径:</b> <%= h "#{@mustache_render_folder.full_path}" %>
+    <b>文件名:</b> <%= h "#{@mustache_render_template.name}" %>
+  </div>
+
+  <div class='field'>
+    <b>全路径:</b> <%= h "#{@mustache_render_template.full_path}" %>
   </div>
 
   <div class='field'>
@@ -25,5 +29,5 @@
   </div>
 </div>
 
-<%= link_to "返回上一级", mustache_render_manager_folder_url(:folder_id => @mustache_render_template.folder_id) %>
+<%= link_to "返回上一级", mustache_render_manager_folder_url(:id => @mustache_render_template.folder_id) %>
 <%= link_to "编辑", edit_mustache_render_manager_folder_template_url(:folder_id => @mustache_render_template.folder_id, :id => @mustache_render_template.id) %>

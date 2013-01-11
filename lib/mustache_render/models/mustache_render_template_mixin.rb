@@ -30,7 +30,7 @@ module MustacheRender::Models
       private
 
       def impl_generate_full_path
-        self.full_path = self.folder.try :full_path
+        self.full_path = "#{self.folder.try :full_path}/#{self.name}"
       end
     end
   end

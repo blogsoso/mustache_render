@@ -13,6 +13,25 @@ module MustacheRender
       end
 
       module ClassMethods
+        # now happy code here
+        #
+        # 从数据库记录中的模板进行渲染
+        #
+        def render_db(path_name, context={})
+          render(partial(path_name, :media => :db), context)
+        end
+
+        def partial(name, options={})
+          if options[:media] == :file
+            File.read("#{template_path}/#{name}.#{template_extension}")
+          else
+            db_template = ::MustacheRenderTemplate.find_by_full_path(name)
+            db_template.try :content
+          end
+        end
+
+        #### after here from origin #######################################
+
         # Instantiates an instance of this class and calls `render` with
         # the passed args.
         #
@@ -24,21 +43,20 @@ module MustacheRender
         alias_method :to_html, :render
         alias_method :to_text, :render
 
-
         # Given a file name and an optional context, attempts to load and
         # render the file as a template.
         def render_file(name, context = {})
           render(partial(name), context)
         end
 
-        # Given a name, attempts to read a file and return the contents as a
-        # string. The file is not rendered, so it might contain
-        # {{mustaches}}.
-        #
-        # Call `render` if you need to process it.
-        def partial(name)
-          File.read("#{template_path}/#{name}.#{template_extension}")
-        end
+        ## # Given a name, attempts to read a file and return the contents as a
+        ## # string. The file is not rendered, so it might contain
+        ## # {{mustaches}}.
+        ## #
+        ## # Call `render` if you need to process it.
+        ## def partial(name)
+        ##   File.read("#{template_path}/#{name}.#{template_extension}")
+        ## end
 
         #
         # Private API
