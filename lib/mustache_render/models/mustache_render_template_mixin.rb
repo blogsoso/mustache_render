@@ -9,10 +9,7 @@ module MustacheRender::Models
 
         belongs_to :folder, :class_name => 'MustacheRenderFolder'
 
-        validate                :impl_generate_full_path
-
         validates_presence_of   :folder_id
-        validates_presence_of   :full_path
         validates_presence_of   :name
 
         extend  ClassMethods
@@ -21,16 +18,24 @@ module MustacheRender::Models
     end
 
     module ClassMethods
+      def find_with_full_path(name)
+        # 首先获取文件夹的名称, 然后获取文件名
+        tmp_paths = name.to_s.split('/')
 
+        template_name = tmp_paths.pop.to_s
+
+        folder_full_path = "#{tmp_paths.join('/')}"
+        folder = ::MustacheRenderFolder.find_by_full_path(folder_full_path)
+
+        if folder
+          self.find_by_folder_id_and_name(folder.try(:id), template_name)
+        end
+      end
     end
 
     module InstanceMethods
-      protected
-
-      private
-
-      def impl_generate_full_path
-        self.full_path = "#{self.folder.try :full_path}/#{self.name}"
+      def full_path
+        "#{self.folder.try :full_path}/#{self.name}"
       end
     end
   end

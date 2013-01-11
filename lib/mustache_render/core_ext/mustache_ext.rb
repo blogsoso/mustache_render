@@ -25,7 +25,7 @@ module MustacheRender
           if options[:media] == :file
             File.read("#{template_path}/#{name}.#{template_extension}")
           else
-            db_template = ::MustacheRenderTemplate.find_by_full_path(name)
+            db_template = ::MustacheRenderTemplate.find_with_full_path(name)
             db_template.try :content
           end
         end

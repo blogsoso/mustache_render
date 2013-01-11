@@ -21,7 +21,6 @@ class MustacheRenderMigration < ActiveRecord::Migration
 
     create_table :mustache_render_templates do |t|
       t.integer :folder_id                   # 文件夹的ID
-      t.string  :full_path,   :default => '' # 模板的全路径
       t.string  :name                        # 模板的名称
       t.text    :content                     # 代码
 
