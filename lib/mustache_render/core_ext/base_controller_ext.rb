@@ -11,25 +11,31 @@ module MustacheRender::CoreExt
     end
 
     module ClassMethods
-#      def acts_as_mustache_renderer
-#        helper_method :mustache_render
-#        include InstanceMethods
-#      end
     end
 
     module InstanceMethods
-      # def mustache_render(mustache_template='', mustache={})
-      #   render :text => ::Mustache.render(mustache_template, mustache)
-      # end
+      def mustache_render template='', mustache={}
+        result = ::MustacheRender::Mustache.render(template, mustache)
+        impl_mustache_result_render result
+      end
+
+      def mustache_file_render template_path=nil, mustache={}
+        result = ::MustacheRender::Mustache.file_render(template_path, mustache)
+        impl_mustache_result_render result
+      end
 
       #
       # 使用数据库中的模板进行渲染
       # - template_path: 模板的路径
       #
       def mustache_db_render(template_path=nil, mustache={})
-        # result = ::Mustache.render(template_path, mustache)
-        result = ::MustacheRender::Mustache.render_file(template_path, mustache)
+        result = ::MustacheRender::Mustache.db_render(template_path, mustache)
+        impl_mustache_result_render result
+      end
 
+      private
+
+      def impl_mustache_result_render(result)
         if self.is_a?(ActionController::Base)
           render :text => result
         else

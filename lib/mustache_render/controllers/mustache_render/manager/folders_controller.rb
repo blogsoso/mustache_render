@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module MustacheRender::Manager
   class FoldersController < BaseController
     def index

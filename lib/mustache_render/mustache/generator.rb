@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module MustacheRender
   class Mustache
     # The Generator is in charge of taking an array of Mustache tokens,

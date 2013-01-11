@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module MustacheRender::Manager
   class BaseController < ::ApplicationController
     before_filter :set_mustache_manager_view_path

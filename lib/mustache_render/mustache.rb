@@ -1,122 +1,26 @@
+# -*- encoding : utf-8 -*-
 require 'mustache_render/mustache/template'
 require 'mustache_render/mustache/context'
-require 'mustache_render/mustache/settings'
 
-# Mustache is the base class from which your Mustache subclasses
-# should inherit (though it can be used on its own).
-#
-# The typical Mustache workflow is as follows:
-#
-# * Create a Mustache subclass: class Stats < Mustache
-# * Create a template: stats.mustache
-# * Instantiate an instance: view = Stats.new
-# * Render that instance: view.render
-#
-# You can skip the instantiation by calling `Stats.render` directly.
-#
-# While Mustache will do its best to load and render a template for
-# you, this process is completely customizable using a few options.
-#
-# All settings can be overriden at the class level.
-#
-# For example, going with the above example, we can use
-# `Stats.template_path = "/usr/local/templates"` to specify the path
-# Mustache uses to find templates.
-#
-# Here are the available options:
-#
-# * template_path
-#
-# The `template_path` setting determines the path Mustache uses when
-# looking for a template. By default it is "."
-# Setting it to /usr/local/templates, for example, means (given all
-# other settings are default) a Mustache subclass `Stats` will try to
-# load /usr/local/templates/stats.mustache
-#
-# * template_extension
-#
-# The `template_extension` is the extension Mustache uses when looking
-# for template files. By default it is "mustache"
-#
-# * template_file
-#
-# You can tell Mustache exactly which template to us with this
-# setting. It can be a relative or absolute path.
-#
-# * template
-#
-# Sometimes you want Mustache to render a string, not a file. In those
-# cases you may set the `template` setting. For example:
-#
-#   >> Mustache.render("Hello {{planet}}", :planet => "World!")
-#   => "Hello World!"
-#
-# The `template` setting is also available on instances.
-#
-#   view = Mustache.new
-#   view.template = "Hi, {{person}}!"
-#   view[:person] = 'Mom'
-#   view.render # => Hi, mom!
-#
-# * view_namespace
-#
-# To make life easy on those developing Mustache plugins for web frameworks or
-# other libraries, Mustache will attempt to load view classes (i.e. Mustache
-# subclasses) using the `view_class` class method. The `view_namespace` tells
-# Mustache under which constant view classes live. By default it is `Object`.
-#
-# * view_path
-#
-# Similar to `template_path`, the `view_path` option tells Mustache where to look
-# for files containing view classes when using the `view_class` method.
-#
 module MustacheRender
   class Mustache
-
-    #
-    # Public API
-    #
-
-    # Instantiates an instance of this class and calls `render` with
-    # the passed args.
-    #
-    # Returns a rendered String version of a template
     def self.render(*args)
       new.render(*args)
     end
 
-    class << self
-      alias_method :to_html, :render
-      alias_method :to_text, :render
+    attr_reader :media ## 模板的媒介
+
+    def config
+      ::MustacheRender.config
     end
 
-    # Parses our fancy pants template file and returns normal file with
-    # all special {{tags}} and {{#sections}}replaced{{/sections}}.
-    #
-    # data - A String template or a Hash context. If a Hash is given,
-    #        we'll try to figure out the template from the class.
-    #  ctx - A Hash context if `data` is a String template.
-    #
-    # Examples
-    #
-    #   @view.render("Hi {{thing}}!", :thing => :world)
-    #
-    #   View.template = "Hi {{thing}}!"
-    #   @view = View.new
-    #   @view.render(:thing => :world)
-    #
-    # Returns a rendered String version of a template
-    def render(data = template, ctx = {})
-      if data.is_a? Hash
-        ctx = data
-        tpl = templateify(template)
-      elsif data.is_a? Symbol
-        self.template_name = data
-        tpl = templateify(template)
-      else
-        tpl = templateify(data)
-      end
+    def media
+      @media ||= config.default_render_media
+    end
 
+    def render(data = template, ctx = {})
+      tpl = templateify(data)
+ 
       return tpl.render(context) if ctx == {}
 
       begin
@@ -126,9 +30,6 @@ module MustacheRender
         context.pop
       end
     end
-
-    alias_method :to_html, :render
-    alias_method :to_text, :render
 
     # Context accessors.
     #
@@ -153,37 +54,41 @@ module MustacheRender
 
     # Given a file name and an optional context, attempts to load and
     # render the file as a template.
-    def self.render_file(name, context = {})
-      render(partial(name), context)
+    def self.file_render(name, context = {})
+      self.new.file_render name, context
     end
 
     # Given a file name and an optional context, attempts to load and
     # render the file as a template.
-    def render_file(name, context = {})
-      self.class.render_file(name, context)
+    def file_render(name, context = {})
+      @media = :file
+      render(partial(name), context)
     end
 
-    def self.read_template(name)
-      db_template = ::MustacheRenderTemplate.find_with_full_path(name)
-      db_template.try :content
+    def self.db_render(full_path, context={})
+      self.new.db_render full_path, context
     end
 
-    # Given a name, attempts to read a file and return the contents as a
-    # string. The file is not rendered, so it might contain
-    # {{mustaches}}.
-    #
-    # Call `render` if you need to process it.
-    def self.partial(name)
-      self.read_template(name)
+    def db_render(full_path, context={})
+      @media = :db
+      render(partial(full_path), context)
+    end
 
-      # File.read("#{template_path}/#{name}.#{template_extension}")
+    def read_template_from_meida name
+      case media
+      when :db
+        db_template = ::MustacheRenderTemplate.find_with_full_path(name)
+        db_template.try :content
+      when :file
+        File.read "#{config.file_template_root_path}/#{name}.#{config.file_template_extension}"
+      end
     end
 
     # Override this in your subclass if you want to do fun things like
     # reading templates from a database. It will be rendered by the
     # context, so all you need to do is return a string.
     def partial(name)
-      self.class.partial(name)
+      self.read_template_from_meida name
     end
 
     # Override this to provide custom escaping.
@@ -198,7 +103,6 @@ module MustacheRender
     def escapeHTML(str)
       CGI.escapeHTML(str)
     end
-
 
     #
     # Private API

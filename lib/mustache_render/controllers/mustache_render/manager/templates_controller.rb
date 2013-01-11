@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module MustacheRender::Manager
   class TemplatesController < BaseController
     before_filter :load_folder_record

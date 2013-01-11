@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module MustacheRender
   class Mustache
     # A ContextMiss is raised whenever a tag's target can not be found
@@ -103,7 +104,7 @@ module MustacheRender
           end
         end
 
-        if default == :__raise || mustache_in_stack.raise_on_context_miss?
+        if default == :__raise || MustacheRender.config.raise_on_context_miss?
           raise ContextMiss.new("Can't find #{name} in #{@stack.inspect}")
         else
           default
