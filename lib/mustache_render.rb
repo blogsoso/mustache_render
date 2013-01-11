@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 require 'mustache_render/config'
+require 'mustache_render/mustache'
 
 module MustacheRender
-
   module Manager
     autoload :BaseController,      'mustache_render/controllers/mustache_render/manager/base_controller'
     autoload :FoldersController,   'mustache_render/controllers/mustache_render/manager/folders_controller'
@@ -10,8 +10,7 @@ module MustacheRender
   end
 
   module CoreExt
-    autoload :MustacheExt,       'mustache_render/core_ext/mustache_ext'
-    autoload :BaseControllerExt, 'mustache_render/core_ext/base_controller_ext'
+    autoload :BaseControllerExt,   'mustache_render/core_ext/base_controller_ext'
   end
 
   module Controllers
@@ -21,10 +20,6 @@ module MustacheRender
     autoload :MustacheRenderFolderMixin,   'mustache_render/models/mustache_render_folder_mixin'
     autoload :MustacheRenderTemplateMixin, 'mustache_render/models/mustache_render_template_mixin'
   end
-end
-
-if defined?(::Mustache)
-  ::Mustache.send :include, ::MustacheRender::CoreExt::MustacheExt
 end
 
 if defined?(::ActionController::Base)

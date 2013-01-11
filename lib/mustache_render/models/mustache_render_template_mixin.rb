@@ -18,6 +18,9 @@ module MustacheRender::Models
     end
 
     module ClassMethods
+      #
+      # TODO: add cache here!
+      #
       def find_with_full_path(name)
         # 首先获取文件夹的名称, 然后获取文件名
         tmp_paths = name.to_s.split('/')
@@ -27,9 +30,7 @@ module MustacheRender::Models
         folder_full_path = "#{tmp_paths.join('/')}"
         folder = ::MustacheRenderFolder.find_by_full_path(folder_full_path)
 
-        if folder
-          self.find_by_folder_id_and_name(folder.try(:id), template_name)
-        end
+        self.find_by_folder_id_and_name(folder.try(:id), template_name)
       end
     end
 

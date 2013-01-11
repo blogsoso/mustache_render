@@ -17,7 +17,7 @@ module MustacheRender::Manager
     end
 
     def create
-      @mustache_render_template = MustacheRenderTemplate.new(params[:template])
+      @mustache_render_template = MustacheRenderTemplate.new(params[:mustache_render_template])
 
       if @mustache_render_template.save
         redirect_to mustache_render_manager_folder_template_url(
@@ -31,7 +31,7 @@ module MustacheRender::Manager
     def update
       @mustache_render_template = MustacheRenderTemplate.find params[:id]
 
-      if @mustache_render_template.update_attributes(params[:template])
+      if @mustache_render_template.update_attributes(params[:mustache_render_template])
         redirect_to mustache_render_manager_folder_template_url(
           :folder_id => @mustache_render_template.folder_id, :id => @mustache_render_template
         )

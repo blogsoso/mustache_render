@@ -27,7 +27,9 @@ module MustacheRender::CoreExt
       # - template_path: 模板的路径
       #
       def mustache_db_render(template_path=nil, mustache={})
-        result = ::Mustache.render_db(template_path, mustache)
+        # result = ::Mustache.render(template_path, mustache)
+        result = ::MustacheRender::Mustache.render_file(template_path, mustache)
+
         if self.is_a?(ActionController::Base)
           render :text => result
         else

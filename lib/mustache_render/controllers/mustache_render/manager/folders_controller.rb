@@ -20,7 +20,7 @@ module MustacheRender::Manager
     end
 
     def create
-      @mustache_render_folder = MustacheRenderFolder.new(params[:folder])
+      @mustache_render_folder = MustacheRenderFolder.new(params[:mustache_render_folder])
 
       if @mustache_render_folder.save
         redirect_to mustache_render_manager_folder_url(@mustache_render_folder)
@@ -32,7 +32,7 @@ module MustacheRender::Manager
     def update
       @mustache_render_folder = MustacheRenderFolder.find params[:id]
 
-      if @mustache_render_folder.update_attributes(params[:folder])
+      if @mustache_render_folder.update_attributes(params[:mustache_render_folder])
         redirect_to mustache_render_manager_folder_url(@mustache_render_folder)
       else
         render :edit

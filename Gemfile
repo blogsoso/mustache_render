@@ -6,7 +6,7 @@ source "http://rubygems.org"
 
 gemspec
 
-gem "mustache", "~> 0.99.4"
+# gem "mustache", "~> 0.99.4"
 gem "awesome_nested_set"
 
 # jquery-rails is used by the dummy application

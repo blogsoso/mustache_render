@@ -26,6 +26,7 @@ module MustacheRender::Models
         validate                :impl_validate_full_path
         validates_presence_of   :name
         validates_uniqueness_of :full_path
+        after_save :impl_update_children_full_path
 
         extend  ClassMethods
         include InstanceMethods
@@ -33,6 +34,22 @@ module MustacheRender::Models
     end
 
     module ClassMethods
+      #
+      # 相关的parents
+      #
+      def associate_parents(objects)
+        if objects.all?{|o| o.respond_to?(:association)}
+          id_indexed = objects.index_by(&:id)
+          objects.each do |object|
+            if !(association = object.association(:parent)).loaded? && (parent = id_indexed[object.parent_id])
+              association.target = parent
+              association.set_inverse_instance(parent)
+            end
+          end
+        else
+          objects
+        end
+      end
 
       def nested_set_options(class_or_item=nil, mover = nil)
         class_or_item ||= self
@@ -80,6 +97,13 @@ module MustacheRender::Models
 
       def impl_validate_full_path
         self.full_path = impl_generate_full_path
+      end
+
+      def impl_update_children_full_path
+        self.children.each do |child|
+          child.send :impl_validate_full_path
+          child.save
+        end
       end
 
       private

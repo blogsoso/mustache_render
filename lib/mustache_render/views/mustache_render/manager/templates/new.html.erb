@@ -1,8 +1,8 @@
 <h1>新建模板文件</h1>
 
-<%= form_for(@mustache_render_template, :url => mustache_render_manager_folder_templates_url(
+<% form_for(@mustache_render_template, :url => mustache_render_manager_folder_templates_url(
   :folder_id => @mustache_render_template.folder_id
-), :as => :template) do |f| %>
+)) do |f| %>
 
 <%= render :partial => 'form', :locals => { :f => f } %>
 
