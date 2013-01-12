@@ -1,9 +1,0 @@
-<%= form_for(@mustache_render_template, :url => mustache_render_manager_folder_template_url(
-  :folder_id => @mustache_render_template.folder_id,
-  :id => @mustache_render_template.id
-)) do |f| %>
-
-<%= render :partial => 'form', :locals => { :f => f } %>
-
-<% end %>
-
