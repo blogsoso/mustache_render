@@ -22,9 +22,10 @@ module MustacheRender
   end
 
   module Models
-    autoload :MustacheRenderManagerMixin,  'mustache_render/models/mustache_render_manager_mixin'
-    autoload :MustacheRenderFolderMixin,   'mustache_render/models/mustache_render_folder_mixin'
-    autoload :MustacheRenderTemplateMixin, 'mustache_render/models/mustache_render_template_mixin'
+    autoload :MustacheRenderManagerMixin,           'mustache_render/models/mustache_render_manager_mixin'
+    autoload :MustacheRenderFolderMixin,            'mustache_render/models/mustache_render_folder_mixin'
+    autoload :MustacheRenderTemplateMixin,          'mustache_render/models/mustache_render_template_mixin'
+    autoload :MustacheRenderTemplateVersionMixin,   'mustache_render/models/mustache_render_template_version_mixin'
   end
 end
 

@@ -11,7 +11,7 @@ module MustacheRender
       def copy_files
         orm = options[:orm].to_s
         orm = "active_record" unless %w{active_record}.include?(orm)
-        %w(mustache_render_folder mustache_render_template mustache_render_manager).each do |file|
+        %w(mustache_render_folder mustache_render_template mustache_render_manager mustache_render_template_version).each do |file|
           copy_model(orm, file)
         end
 

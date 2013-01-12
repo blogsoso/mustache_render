@@ -4,10 +4,12 @@ module MustacheRender
   # MustacheRender的适配器
   #
   class << self
-    attr_accessor :adapter
+    def adapter
+      @adapter ||= Adapter.new
+    end
 
     def adapter_configure
-      yield self.adapter ||= Adapter.new
+      yield(@adapter ||= Adapter.new)
     end
   end
 

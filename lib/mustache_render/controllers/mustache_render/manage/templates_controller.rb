@@ -32,7 +32,14 @@ module MustacheRender::Manage
     def update
       @mustache_render_template = MustacheRenderTemplate.find params[:id]
 
+      last_template_updated_at = @mustache_render_template.updated_at
+
       if @mustache_render_template.update_attributes(params[:mustache_render_template])
+        if last_template_updated_at < @mustache_render_template.updated_at
+          ## changed 了
+          @mustache_render_template.create_new_version(:user_id => current_user.id)
+        end
+
         redirect_to mustache_render_manage_folder_template_url(
           :folder_id => @mustache_render_template.folder_id, :id => @mustache_render_template
         )

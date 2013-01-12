@@ -28,15 +28,32 @@ class MustacheRenderMigration < ActiveRecord::Migration
       t.timestamps
     end
 
+    create_table :mustache_render_template_versions do |t|
+      t.integer :template_id                 # 模板的id
+      t.integer :user_id                     # 用户ID
+      t.integer :folder_id                   # 文件夹的ID
+      t.string  :name                        # 模板的名称
+      t.text    :content                     # 代码
+      t.string  :full_path
+
+      t.text    :note                        # 备注
+      t.timestamps
+    end
+
     create_table :mustache_render_managers do |t|
-      t.integer  :user_id
+      t.integer :user_id
+
+      t.integer :admin_able # 是否是管理权限
+      t.integer :edit_able  # 是否可以编辑
 
       t.timestamps
     end
+
   end
 
   def self.down
     drop_table :mustache_render_folders
+    drop_table :mustache_render_template_versions
     drop_table :mustache_render_templates
     drop_table :mustache_render_managers
   end
