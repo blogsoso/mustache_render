@@ -12,6 +12,15 @@ module MustacheRender
     def initialize
     end
 
+    # 配置适配器
+    def adapter_configure(&block)
+      ::MustacheRender.adapter_configure do |adapter|
+        if block_given?
+          block.call adapter
+        end
+      end
+    end
+
     #
     # 默认的渲染媒介
     #
@@ -52,6 +61,16 @@ module MustacheRender
 
     def raise_on_context_miss=(boolean)
       @raise_on_context_miss = boolean
+    end
+
+    def manager_view_base
+      @manager_view_base ||= {
+        :title => "MustacheRender Manager Center"
+      }.merge(@_manager_view_base || {})
+    end
+
+    def manager_view_base= options={}
+      @_manager_view_base = options
     end
 
   end

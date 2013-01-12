@@ -1,9 +1,9 @@
 <h1>编辑模板文件夹</h1>
 
-<% form_for(@mustache_render_folder, :url => mustache_render_manager_folder_url(@mustache_render_folder)) do |f| %>
-
-  <%= render :partial => 'form', :locals => { :f => f } %>
-
+<% if MustacheRender.adapter.rails_2? %>
+  <%= render :partial => 'edit_2' %>
+<% else %>
+  <%= render :partial => 'edit_3' %>
 <% end %>
 
 <%= link_to "返回列表", mustache_render_manager_folders_url %>
