@@ -17,18 +17,18 @@ module MustacheRender
 
     ############# routes ##########################################
 
-    def route_adapter(router)
+    def manage_route_adapter(router)
       if rails_2?
         router.namespace :mustache_render do |render|
-          render.namespace :manager do |manager|
-            manager.resources :folders do |folder|
+          render.namespace :manage do |manage|
+            manage.resources :folders do |folder|
               folder.resources :templates
             end
           end
         end
       elsif rails_3?
         router.namespace :mustache_render do
-          router.namespace :manager do
+          router.namespace :manage do
             router.resources :folders do
               router.resources :templates, :only => [:show, :new, :edit, :update, :create, :destroy]
             end

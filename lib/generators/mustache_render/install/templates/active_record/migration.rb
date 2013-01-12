@@ -27,11 +27,18 @@ class MustacheRenderMigration < ActiveRecord::Migration
       t.text    :note                        # 备注
       t.timestamps
     end
+
+    create_table :mustache_render_managers do |t|
+      t.integer  :user_id
+
+      t.timestamps
+    end
   end
 
   def self.down
     drop_table :mustache_render_folders
     drop_table :mustache_render_templates
+    drop_table :mustache_render_managers
   end
 end
 

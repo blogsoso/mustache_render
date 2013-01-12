@@ -32,6 +32,35 @@ module MustacheRender
       @default_render_media ||= media
     end
 
+    def manager_authenticate_fail_url
+      @manager_authenticate_fail_url ||= '/login'
+    end
+
+    def manager_authenticate_fail_url= url
+      @manager_authenticate_fail_url ||= url
+    end
+
+    def user_login_url
+      @user_login_url ||= '/login'
+    end
+
+    def user_login_url= url
+      @user_login_url ||= url
+    end
+
+    def manage_center_need_login?
+      if defined?(@manage_center_need_login)
+        @manage_center_need_login
+      else
+        true
+      end
+    end
+
+    ## 管理中心是否需要登录 ？
+    def manage_center_need_login= value
+      @manage_center_need_login = value unless defined?(@manage_center_need_login)
+    end
+
     #
     # lib 的基本路径
     #
@@ -63,14 +92,14 @@ module MustacheRender
       @raise_on_context_miss = boolean
     end
 
-    def manager_view_base
-      @manager_view_base ||= {
-        :title => "MustacheRender Manager Center"
-      }.merge(@_manager_view_base || {})
+    def manage_view_base
+      @manage_view_base ||= {
+        :title => "MustacheRender Manage Center"
+      }.merge(@_manage_view_base || {})
     end
 
-    def manager_view_base= options={}
-      @_manager_view_base = options
+    def manage_view_base= options={}
+      @_manage_view_base = options
     end
 
   end

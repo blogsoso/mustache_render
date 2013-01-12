@@ -6,12 +6,12 @@ require 'mustache_render/mustache'
 module MustacheRender
   autoload :Adapter, 'mustache_render/adapter'
 
-  module Manager
-    autoload :BaseHelper,          'mustache_render/helpers/mustache_render/manager/base_helper'
+  module Manage
+    autoload :BaseHelper,          'mustache_render/helpers/mustache_render/manage/base_helper'
 
-    autoload :BaseController,      'mustache_render/controllers/mustache_render/manager/base_controller'
-    autoload :FoldersController,   'mustache_render/controllers/mustache_render/manager/folders_controller'
-    autoload :TemplatesController, 'mustache_render/controllers/mustache_render/manager/templates_controller'
+    autoload :BaseController,      'mustache_render/controllers/mustache_render/manage/base_controller'
+    autoload :FoldersController,   'mustache_render/controllers/mustache_render/manage/folders_controller'
+    autoload :TemplatesController, 'mustache_render/controllers/mustache_render/manage/templates_controller'
   end
 
   module CoreExt
@@ -22,6 +22,7 @@ module MustacheRender
   end
 
   module Models
+    autoload :MustacheRenderManagerMixin,  'mustache_render/models/mustache_render_manager_mixin'
     autoload :MustacheRenderFolderMixin,   'mustache_render/models/mustache_render_folder_mixin'
     autoload :MustacheRenderTemplateMixin, 'mustache_render/models/mustache_render_template_mixin'
   end

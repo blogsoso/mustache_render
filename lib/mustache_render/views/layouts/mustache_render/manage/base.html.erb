@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= h(MustacheRender.config.manage_view_base[:title]) %></title>
+  <script type='text/javascript'>
+    <%= h(generate_jquery_code) %>
+  </script>
+
+  <script type='text/javascript'>
+    <%= raw generate_jquery_ujs_code %>
+  </script>
+
+  <% unless MustacheRender.adapter.rails_2? %>
+    <%= csrf_meta_tags %>
+  <% end %>
+</head>
+<body>
+
+<%= yield %>
+
+</body>
+</html>

@@ -13,5 +13,13 @@ MustacheRender.configure do |config|
 
   # 当模板缺少的时候是否抛出异常
   config.raise_on_context_miss   = false
+
+  config.adapter_configure do |adapter|
+
+  end
+
+  config.manage_center_need_login      = true
+  config.user_login_url             = '/login'
+  config.manager_authenticate_fail_url = '/login'
 end
 
