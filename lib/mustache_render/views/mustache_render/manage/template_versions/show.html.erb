@@ -27,7 +27,18 @@
     <b>备注:</b> <br/>
     <%= h "#{@mustache_render_template_version.note}" %>
   </div>
+
+  <div class='field'>
+    <b>更新日志:</b> <br/>
+    <%= h "#{@mustache_render_template_version.change_log}" %>
+  </div>
 </div>
+
+<%= link_to '编辑该版本', edit_mustache_render_manage_folder_template_template_version_url(
+  :folder_id   => @mustache_render_template_version.folder_id,
+  :template_id => @mustache_render_template_version.template_id,
+  :id          => @mustache_render_template_version.id
+) %>
 
 <%= link_to "返回文件夹", mustache_render_manage_folder_url(:id => @mustache_render_template_version.folder_id) %>
 <%= link_to "返回现行版本", mustache_render_manage_folder_template_url(

@@ -24,7 +24,7 @@ module MustacheRender
           render.namespace :manage do |manage|
             manage.resources :folders do |folder|
               folder.resources :templates, :only => [:show, :new, :edit, :update, :create, :destroy] do |template|
-                template.resources :template_versions, :only => [:show, :index, :destroy, :update], :member => {
+                template.resources :template_versions, :only => [:show, :index, :destroy, :update, :edit], :member => {
                   :revert => :post
                 }
               end
@@ -36,7 +36,7 @@ module MustacheRender
           router.namespace :manage do
             router.resources :folders do
               router.resources :templates, :only => [:show, :new, :edit, :update, :create, :destroy] do |template|
-                router.resources :template_versions, :only => [:show, :index, :destroy, :update] do
+                router.resources :template_versions, :only => [:show, :index, :destroy, :update, :edit] do
                   router.member do
                     router.post :revert
                   end

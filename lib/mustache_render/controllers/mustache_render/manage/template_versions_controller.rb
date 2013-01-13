@@ -23,15 +23,25 @@ module MustacheRender::Manage
       )
     end
 
+    def edit
+      @mustache_render_template_version = MustacheRenderTemplateVersion.find params[:id]
+    end
+
     def update
       @mustache_render_template_version = MustacheRenderTemplateVersion.find params[:id]
 
       if @mustache_render_template_version.update_attributes(params[:mustache_render_template_version])
         respond_to do |format|
+          format.html { redirect_to mustache_render_manage_folder_template_template_version_url(
+            :folder_id => @mustache_render_template_version.folder_id,
+            :template_id => @mustache_render_template_version.template_id,
+            :id => @mustache_render_template_version.id
+          )}
           format.json { head :no_content }
         end
       else
         respond_to do |format|
+          format.html { render 'edit' }
           format.json { render :json => @mustache_render_template_version.errors, :status => :unprocessable_entity }
         end
       end
