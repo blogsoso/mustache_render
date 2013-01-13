@@ -25,6 +25,10 @@ module MustacheRender::Models
           r.errors.add :change, '没有改动' if !(r.new_record?) && !(r.changed?)
         end
 
+        before_save do |r|
+          ::MustacheRender::Mustache.delete_partial_cache(r.full_path_was, :db)
+        end
+
         extend  ClassMethods
         include InstanceMethods
       end

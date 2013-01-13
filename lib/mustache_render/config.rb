@@ -48,6 +48,69 @@ module MustacheRender
       @user_login_url ||= url
     end
 
+    def cache
+      return @_cache_store if defined?(@_cache_store)
+
+      @_cache_store ||= Rails.cache
+      # @_cache_store ||= MemCache.new('localhost:11211', :namespace => 'mustache_render#cache')
+    end
+
+    def cache_store= cache_store
+      @_cache_store ||= cache_store
+    end
+
+    #
+    # 是否开启缓存
+    #
+    def db_template_cache?
+      if defined?(@_db_template_cache)
+        @_db_template_cache
+      else
+        true
+      end
+    end
+
+    #
+    # 是否开启缓存
+    #
+    def file_template_cache?
+      if defined?(@_file_template_cache)
+        @_file_template_cache
+      else
+        false
+      end
+    end
+
+    #
+    # 设置是否启用缓存
+    #
+    def db_template_cache= user_cache
+      @_db_template_cache = user_cache unless defined?(@_db_template_cache)
+    end
+
+    #
+    # 设置是否启用缓存
+    #
+    def file_template_cache= user_cache
+      @_file_template_cache = user_cache unless defined?(@_file_template_cache)
+    end
+
+    def db_template_cache_expires_in
+      @db_template_cache_expires_in ||= 1.hours
+    end
+
+    def file_template_cache_expires_in
+      @file_template_cache_expires_in ||= 5.minutes
+    end
+
+    def db_template_cache_expires_in= expires_in
+      @db_template_cache_expires_in ||= expires_in
+    end
+
+    def file_template_cache_expires_in= expires_in
+      @file_template_cache_expires_in ||= expires_in
+    end
+
     def manage_center_need_login?
       if defined?(@manage_center_need_login)
         @manage_center_need_login
