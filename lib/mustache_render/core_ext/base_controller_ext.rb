@@ -3,17 +3,14 @@ module MustacheRender::CoreExt
   module BaseControllerExt
     def self.included(base)
       base.class_eval do
-        helper_method :mustache_db_render
+        helper HelperMethods
 
         extend   ClassMethods
         include InstanceMethods
       end
     end
 
-    module ClassMethods
-    end
-
-    module InstanceMethods
+    module SharedMethods
       def mustache_render template='', mustache={}
         result = ::MustacheRender::Mustache.render(template, mustache)
         impl_mustache_result_render result
@@ -32,15 +29,28 @@ module MustacheRender::CoreExt
         result = ::MustacheRender::Mustache.db_render(template_path, mustache)
         impl_mustache_result_render result
       end
+    end
+
+    module ClassMethods
+    end
+
+    module HelperMethods
+      include SharedMethods
 
       private
 
       def impl_mustache_result_render(result)
-        if self.is_a?(ActionController::Base)
-          render :text => result
-        else
-          result
-        end
+        raw result
+      end
+    end
+
+    module InstanceMethods
+      include SharedMethods
+
+      private
+
+      def impl_mustache_result_render(result)
+        render :text => result
       end
     end
   end
