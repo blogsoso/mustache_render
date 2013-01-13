@@ -20,6 +20,8 @@ class MustacheRenderMigration < ActiveRecord::Migration
     end
 
     create_table :mustache_render_templates do |t|
+      t.integer :last_user_id                # 最后一个修改模板的用户
+      t.integer :create_user_id              # 创建者的用户id
       t.integer :folder_id                   # 文件夹的ID
       t.string  :name                        # 模板的名称
       t.text    :content                     # 代码
@@ -30,11 +32,13 @@ class MustacheRenderMigration < ActiveRecord::Migration
 
     create_table :mustache_render_template_versions do |t|
       t.integer :template_id                 # 模板的id
-      t.integer :user_id                     # 用户ID
+      t.integer :last_user_id                # 最后一个修改模板的用户
+      t.integer :create_user_id              # 创建者的用户id
       t.integer :folder_id                   # 文件夹的ID
       t.string  :name                        # 模板的名称
       t.text    :content                     # 代码
       t.string  :full_path
+      t.string  :change_log                  # 修改日志
 
       t.text    :note                        # 备注
       t.timestamps

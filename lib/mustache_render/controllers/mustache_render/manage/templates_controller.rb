@@ -18,7 +18,10 @@ module MustacheRender::Manage
     end
 
     def create
-      @mustache_render_template = MustacheRenderTemplate.new(params[:mustache_render_template])
+      @mustache_render_template = MustacheRenderTemplate.new(params[:mustache_render_template].merge(
+        :create_user_id => current_user.id,
+        :last_user_id   => current_user.id
+      ))
 
       if @mustache_render_template.save
         redirect_to mustache_render_manage_folder_template_url(
@@ -32,14 +35,9 @@ module MustacheRender::Manage
     def update
       @mustache_render_template = MustacheRenderTemplate.find params[:id]
 
-      last_template_updated_at = @mustache_render_template.updated_at
+      @mustache_render_template.update_attributes(params[:mustache_render_template].merge(:last_user_id => current_user.id))
 
-      if @mustache_render_template.update_attributes(params[:mustache_render_template])
-        if last_template_updated_at < @mustache_render_template.updated_at
-          ## changed 了
-          @mustache_render_template.create_new_version(:user_id => current_user.id)
-        end
-
+      if @mustache_render_template.errors.empty?
         redirect_to mustache_render_manage_folder_template_url(
           :folder_id => @mustache_render_template.folder_id, :id => @mustache_render_template
         )

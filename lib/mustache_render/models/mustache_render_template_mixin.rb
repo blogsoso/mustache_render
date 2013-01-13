@@ -5,13 +5,17 @@ module MustacheRender::Models
       base.class_eval do
         table_name = 'mustache_render_templates'
 
-        attr_accessible :folder_id, :name, :note, :content
+        attr_accessible :folder_id, :name, :note, :content, :last_user_id, :create_user_id, :change_log
+
+        attr_accessor   :change_log
 
         belongs_to :folder,            :class_name => 'MustacheRenderFolder'
         has_many   :template_versions,
           :class_name  => 'MustacheRenderTemplateVersion',
           :foreign_key => 'template_id',
-          :order       => 'mustache_render_template_versions.created_at DESC'
+          :order       => 'mustache_render_template_versions.updated_at DESC'
+
+        before_update :create_new_version
 
         validates_presence_of   :folder_id
         validates_presence_of   :name
@@ -43,28 +47,34 @@ module MustacheRender::Models
         "#{self.folder.try :full_path}/#{self.name}"
       end
 
-      def create_new_version(options={})
-        # 如果有修改，则记录一个版本
-        # if self.changed?
-          #      t.integer :template_id                 # 模板的id
-          #      t.integer :user_id                     # 用户ID
-          #      t.integer :folder_id                   # 文件夹的ID
-          #      t.string  :name                        # 模板的名称
-          #      t.text    :content                     # 代码
-          #      t.string  :full_path
-          #
-          #      t.text    :note                        # 备注
+      def folder_was
+        MustacheRenderFolder.find_by_id self.folder_id_was
+      end
 
+      def full_path_was
+        "#{self.folder_was.try :full_path}/#{self.name_was}"
+      end
+
+      def create_new_version
+        # 如果有修改，则记录一个版本
+        if self.valid? && self.changed?
           self.template_versions.create(
-            :template_id => self.id,
-            :folder_id   => self.folder_id,
-            :name        => self.name,
-            :content     => self.content,
-            :full_path   => self.full_path,
-            :note        => self.note,
-            :user_id     => options[:user_id]
+            :template_id    => self.id,
+            :folder_id      => self.folder_id_was,
+            :name           => self.name_was,
+            :content        => self.content_was,
+            :full_path      => self.full_path_was,
+            :note           => self.note_was,
+            :last_user_id   => self.last_user_id_was,
+            :create_user_id => self.create_user_id_was,
+            :created_at     => self.created_at_was,
+            :updated_at     => self.updated_at_was,
+            :change_log     => self.change_log
           )
-        # end
+        else
+          Rails.logger.debug "没有改动！！！！！！！！"
+          self.errors.add :change_log, '没有改动！'
+        end
       end
     end
   end
