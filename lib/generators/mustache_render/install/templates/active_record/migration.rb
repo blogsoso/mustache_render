@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class MustacheRenderMigration < ActiveRecord::Migration
   def self.up
-    create_table :mustache_render_folders do |t|
+    create_table :mustache_render_folders, :options => 'DEFAULT CHARSET=utf8' do |t|
       t.string :name,      :default => ''    # 文件夹的名称
 
       t.string :full_path, :default => ''    # 全路径
@@ -19,7 +19,7 @@ class MustacheRenderMigration < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :mustache_render_templates do |t|
+    create_table :mustache_render_templates, :options => 'DEFAULT CHARSET=utf8' do |t|
       t.integer :last_user_id                # 最后一个修改模板的用户
       t.integer :create_user_id              # 创建者的用户id
       t.integer :folder_id                   # 文件夹的ID
@@ -30,7 +30,7 @@ class MustacheRenderMigration < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :mustache_render_template_versions do |t|
+    create_table :mustache_render_template_versions, :options => 'DEFAULT CHARSET=utf8' do |t|
       t.integer :template_id                 # 模板的id
       t.integer :last_user_id                # 最后一个修改模板的用户
       t.integer :create_user_id              # 创建者的用户id
@@ -44,7 +44,7 @@ class MustacheRenderMigration < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :mustache_render_managers do |t|
+    create_table :mustache_render_managers, :options => 'DEFAULT CHARSET=utf8' do |t|
       t.integer :user_id
 
       t.integer :admin_able # 是否是管理权限

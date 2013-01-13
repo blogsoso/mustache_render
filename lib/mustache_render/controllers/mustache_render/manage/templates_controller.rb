@@ -19,8 +19,8 @@ module MustacheRender::Manage
 
     def create
       @mustache_render_template = MustacheRenderTemplate.new(params[:mustache_render_template].merge(
-        :create_user_id => current_user.id,
-        :last_user_id   => current_user.id
+        :create_user_id => mustache_render_manager.try(:id),
+        :last_user_id   => mustache_render_manager.try(:id)
       ))
 
       if @mustache_render_template.save
@@ -35,7 +35,9 @@ module MustacheRender::Manage
     def update
       @mustache_render_template = MustacheRenderTemplate.find params[:id]
 
-      @mustache_render_template.update_attributes(params[:mustache_render_template].merge(:last_user_id => current_user.id))
+      @mustache_render_template.update_attributes(params[:mustache_render_template].merge(
+        :last_user_id => mustache_render_manager.try(:id)
+      ))
 
       if @mustache_render_template.errors.empty?
         redirect_to mustache_render_manage_folder_template_url(

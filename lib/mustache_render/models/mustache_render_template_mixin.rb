@@ -19,6 +19,10 @@ module MustacheRender::Models
 
         validates_presence_of   :folder_id
         validates_presence_of   :name
+        validates_presence_of   :change_log
+        validate do |r|
+          r.errors.add :change, '没有改动' unless r.changed?
+        end
 
         extend  ClassMethods
         include InstanceMethods
@@ -71,9 +75,6 @@ module MustacheRender::Models
             :updated_at     => self.updated_at_was,
             :change_log     => self.change_log
           )
-        else
-          Rails.logger.debug "没有改动！！！！！！！！"
-          self.errors.add :change_log, '没有改动！'
         end
       end
     end

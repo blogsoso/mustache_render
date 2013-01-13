@@ -10,8 +10,9 @@ module MustacheRender::Models
     end
 
     module ClassMethods
+      # TODO: authenticate
       def authenticate?(user)
-        user.id == 1
+        true
       end
     end
 
