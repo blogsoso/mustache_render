@@ -19,9 +19,10 @@ module MustacheRender::Models
 
         validates_presence_of   :folder_id
         validates_presence_of   :name
-        validates_presence_of   :change_log
+        validates_presence_of   :change_log, :if => Proc.new { |r| !(r.new_record?) }
+
         validate do |r|
-          r.errors.add :change, '没有改动' unless r.changed?
+          r.errors.add :change, '没有改动' if !(r.new_record?) && !(r.changed?)
         end
 
         extend  ClassMethods
