@@ -37,7 +37,7 @@ module MustacheRender::Models
           :note           => self.note,
           :last_user_id   => self.last_user_id,
           :create_user_id => self.create_user_id,
-          :change_log     => "revert from: #{self.id}【#{self.change_log}】"
+          :change_log     => "【last version: #{self.id} #{self.change_log}】"
         )
       end
     end
