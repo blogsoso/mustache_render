@@ -23,6 +23,33 @@ module MustacheRender::Manage
       )
     end
 
+    def update
+      @mustache_render_template_version = MustacheRenderTemplateVersion.find params[:id]
+
+      if @mustache_render_template_version.update_attributes(params[:mustache_render_template_version])
+        respond_to do |format|
+          format.json { head :no_content }
+        end
+      else
+        respond_to do |format|
+          format.json { render :json => @mustache_render_template_version.errors, :status => :unprocessable_entity }
+        end
+      end
+    end
+
+    def revert
+      # TODO: 是否增加还原功能
+      @mustache_render_template_version = MustacheRenderTemplateVersion.find params[:id]
+
+      @mustache_render_template_version.revert
+
+      redirect_to params[:return_to] || mustache_render_manage_folder_template_template_versions_url(
+        :folder_id   => @mustache_render_template_version.folder_id,
+        :template_id => @mustache_render_template_version.template_id
+      )
+
+    end
+
     protected
 
     def load_template_record

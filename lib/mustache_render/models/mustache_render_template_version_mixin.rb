@@ -26,6 +26,20 @@ module MustacheRender::Models
     end
 
     module InstanceMethods
+      #
+      # 还原这个版本
+      #
+      def revert
+        self.template.update_attributes(
+          :folder_id      => self.folder_id,
+          :name           => self.name,
+          :content        => self.content,
+          :note           => self.note,
+          :last_user_id   => self.last_user_id,
+          :create_user_id => self.create_user_id,
+          :change_log     => "revert from: #{self.id}【#{self.change_log}】"
+        )
+      end
     end
   end
 end
