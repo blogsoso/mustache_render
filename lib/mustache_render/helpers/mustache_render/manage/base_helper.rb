@@ -19,7 +19,6 @@ module MustacheRender::Manage
     # 输出jquery code
     def generate_jquery_code
       @@generated_jquery_code ||= File.read("#{::MustacheRender.config.lib_base_path}/resources/jquery.js")
-      HTML
     end
 
     def generate_jquery_ujs_code

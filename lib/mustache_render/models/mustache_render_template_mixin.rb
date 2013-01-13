@@ -8,7 +8,10 @@ module MustacheRender::Models
         attr_accessible :folder_id, :name, :note, :content
 
         belongs_to :folder,            :class_name => 'MustacheRenderFolder'
-        has_many   :template_versions, :class_name => 'MustacheRenderTemplateVersion', :foreign_key => 'template_id'
+        has_many   :template_versions,
+          :class_name  => 'MustacheRenderTemplateVersion',
+          :foreign_key => 'template_id',
+          :order       => 'mustache_render_template_versions.created_at DESC'
 
         validates_presence_of   :folder_id
         validates_presence_of   :name

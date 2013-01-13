@@ -9,9 +9,10 @@ module MustacheRender
   module Manage
     autoload :BaseHelper,          'mustache_render/helpers/mustache_render/manage/base_helper'
 
-    autoload :BaseController,      'mustache_render/controllers/mustache_render/manage/base_controller'
-    autoload :FoldersController,   'mustache_render/controllers/mustache_render/manage/folders_controller'
-    autoload :TemplatesController, 'mustache_render/controllers/mustache_render/manage/templates_controller'
+    autoload :BaseController,             'mustache_render/controllers/mustache_render/manage/base_controller'
+    autoload :FoldersController,          'mustache_render/controllers/mustache_render/manage/folders_controller'
+    autoload :TemplatesController,        'mustache_render/controllers/mustache_render/manage/templates_controller'
+    autoload :TemplateVersionsController, 'mustache_render/controllers/mustache_render/manage/template_versions_controller'
   end
 
   module CoreExt
