@@ -6,6 +6,11 @@ require 'mustache_render/mustache/generator'
 
 module MustacheRender
   class Mustache
+    # 模板缺失
+    class TemplateMiss < ::RuntimeError
+
+    end
+
     # A Template represents a Mustache template. It compiles and caches
     # a raw string template into something usable.
     #
@@ -15,7 +20,7 @@ module MustacheRender
     #
     # You shouldn't use this class directly, instead:
     #
-    # >> Mustache.render(template, hash)
+    # >> ::MustacheRender::Mustache.render(template, hash)
     class Template
       attr_reader :source
 

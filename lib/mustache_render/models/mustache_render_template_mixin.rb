@@ -20,6 +20,7 @@ module MustacheRender::Models
         validates_presence_of   :folder_id
         validates_presence_of   :name
         validates_presence_of   :change_log, :if => Proc.new { |r| !(r.new_record?) }
+        validates_uniqueness_of :name, :scope => [:folder_id, :name]
 
         validate do |r|
           r.errors.add :change, '没有改动' if !(r.new_record?) && !(r.changed?)
@@ -42,12 +43,27 @@ module MustacheRender::Models
         # 首先获取文件夹的名称, 然后获取文件名
         tmp_paths = name.to_s.split('/')
 
-        template_name = tmp_paths.pop.to_s
+        template_name = ::MustacheRender::Mustache.generate_template_name(
+          tmp_paths.pop.to_s,
+          ::MustacheRender.config.db_template_extension
+        )
 
         folder_full_path = "#{tmp_paths.join('/')}"
+
+        # 需要以 / 开头，此处fix一下这里
+        unless folder_full_path.start_with?('/')
+          folder_full_path = "/#{folder_full_path}"
+        end
+
         folder = ::MustacheRenderFolder.find_by_full_path(folder_full_path)
 
-        self.find_by_folder_id_and_name(folder.try(:id), template_name)
+        template = self.find_by_folder_id_and_name(folder.try(:id), template_name)
+
+        if ::MustacheRender.config.raise_on_db_template_miss? && template.nil?
+          raise ::MustacheRender::Mustache::TemplateMiss.new("read db template error: folder_full_path -> #{folder_full_path} template_name: #{template_name}")
+        end
+
+        template
       end
     end
 

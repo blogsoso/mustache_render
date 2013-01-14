@@ -79,8 +79,33 @@ module MustacheRender
       db_template.try :content
     end
 
+    def self.generate_template_name(name, template_extension)
+      # 如果路径中以扩展名结尾，则直接去取这个文件
+      name = name.to_s.strip
+
+      if name.start_with?('/')
+        name = name[1..-1]
+      end
+
+      if name.end_with?(template_extension)
+        "#{name}"
+      else
+        "#{name}#{template_extension}"
+      end
+    end
+
     def impl_read_file_template name
-      File.read "#{config.file_template_root_path}/#{name}.#{config.file_template_extension}"
+      # TODO: 对路径的语法需要加强
+      full_path = "#{config.file_template_root_path}/#{self.class.generate_template_name(name, config.file_template_extension)}"
+      begin
+        File.read full_path
+      rescue
+        if config.raise_on_file_template_miss?
+          raise ::MustacheRender::Mustache::TemplateMiss.new("read file template error: #{full_path}")
+        else
+          ''
+        end
+      end
     end
 
     def read_template_from_media name, media
@@ -108,6 +133,7 @@ module MustacheRender
     # reading templates from a database. It will be rendered by the
     # context, so all you need to do is return a string.
     def partial(name)
+      puts "self.partial:   #{self.object_id}"
       self.read_template_from_media name, media
     end
 

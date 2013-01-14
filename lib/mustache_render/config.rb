@@ -139,20 +139,46 @@ module MustacheRender
       @file_template_root_path ||= path
     end
 
+    def db_template_extension
+      @db_template_extension ||= '.mustache'
+    end
+
+    def db_template_extension= name
+      @db_template_extension ||= name
+    end
+
     def file_template_extension
-      @file_template_extension ||= 'mustache'
+      @file_template_extension ||= '.mustache'
     end
 
     def file_template_extension= name
       @file_template_extension ||= name
     end
 
+    # 是否抛出文件模板丢失的异常？
+    def raise_on_file_template_miss= _bool
+      @raise_on_file_template_miss = _bool unless defined?(@raise_on_file_template_miss)
+    end
+
+    def raise_on_file_template_miss?
+      defined?(@raise_on_file_template_miss) ? @raise_on_file_template_miss : true
+    end
+
+    # 是否抛出数据库模板miss的异常
+    def raise_on_db_template_miss= _bool
+      @raise_on_db_template_miss = _bool unless defined?(@raise_on_db_template_miss)
+    end
+
+    def raise_on_db_template_miss?
+      defined?(@raise_on_db_template_miss) ? @raise_on_db_template_miss : true
+    end
+
     def raise_on_context_miss?
       defined?(@raise_on_context_miss) ? @raise_on_context_miss : false
     end
 
-    def raise_on_context_miss=(boolean)
-      @raise_on_context_miss = boolean
+    def raise_on_context_miss=(_bool)
+      @raise_on_context_miss = _bool unless defined?(@raise_on_context_miss)
     end
 
     def manage_view_base

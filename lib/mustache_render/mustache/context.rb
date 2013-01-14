@@ -39,7 +39,7 @@ module MustacheRender
       # Find the first Mustache in the stack. If we're being rendered
       # inside a Mustache object as a context, we'll use that one.
       def mustache_in_stack
-        @stack.detect { |frame| frame.is_a?(Mustache) }
+        @stack.detect { |frame| frame.is_a?(::MustacheRender::Mustache) }
       end
 
       # Allows customization of how Mustache escapes things.
@@ -104,7 +104,7 @@ module MustacheRender
           end
         end
 
-        if default == :__raise || MustacheRender.config.raise_on_context_miss?
+        if default == :__raise || ::MustacheRender.config.raise_on_context_miss?
           raise ContextMiss.new("Can't find #{name} in #{@stack.inspect}")
         else
           default
