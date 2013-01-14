@@ -83,7 +83,7 @@ module MustacheRender
       File.read "#{config.file_template_root_path}/#{name}.#{config.file_template_extension}"
     end
 
-    def read_template_from_meida name, media
+    def read_template_from_media name, media
       case media
       when :db
         if ::MustacheRender.config.db_template_cache?
@@ -108,7 +108,7 @@ module MustacheRender
     # reading templates from a database. It will be rendered by the
     # context, so all you need to do is return a string.
     def partial(name)
-      self.read_template_from_meida name, media
+      self.read_template_from_media name, media
     end
 
     def self.partial_cache_key(name, media)
