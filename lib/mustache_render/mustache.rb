@@ -31,6 +31,11 @@ module MustacheRender
       end
     end
 
+    # 片段树
+    def partials_tree
+      
+    end
+
     # Context accessors.
     #
     # view = Mustache.new
@@ -133,7 +138,6 @@ module MustacheRender
     # reading templates from a database. It will be rendered by the
     # context, so all you need to do is return a string.
     def partial(name)
-      puts "self.partial:   #{self.object_id}"
       self.read_template_from_media name, media
     end
 
