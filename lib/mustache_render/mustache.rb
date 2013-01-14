@@ -19,13 +19,13 @@ module MustacheRender
     end
 
     def render(data = template, ctx = {})
-      tpl = templateify(data)
- 
-      return tpl.render(context) if ctx == {}
+      self.template = data
+
+      return self.template.render(context) if ctx == {}
 
       begin
         context.push(ctx)
-        tpl.render(context)
+        self.template.render(context)
       ensure
         context.pop
       end
@@ -238,6 +238,16 @@ module MustacheRender
     # Has this instance or its class already compiled a template?
     def compiled?
       (@template && @template.is_a?(Template)) || self.class.compiled?
+    end
+
+    def template
+      return @template if @template
+
+      self.template = ''
+    end
+
+    def template= template
+      @template = templateify(template)
     end
 
     # template_partial => TemplatePartial
