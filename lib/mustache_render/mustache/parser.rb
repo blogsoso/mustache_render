@@ -105,6 +105,7 @@ module MustacheRender
         # puts ""
         # puts "-----------------------------------------------------"
         # puts @result
+
         @result
       end
 

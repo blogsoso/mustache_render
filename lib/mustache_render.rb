@@ -4,6 +4,10 @@ require 'mustache_render/config'
 require 'mustache_render/mustache'
 
 module MustacheRender
+  def self.logger
+    MustacheRender.config.logger
+  end
+
   autoload :Adapter, 'mustache_render/adapter'
 
   module Manage
