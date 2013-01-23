@@ -4,13 +4,6 @@ require 'mustache_render/config'
 require 'mustache_render/mustache'
 
 module MustacheRender
-<<<<<<< HEAD
-=======
-  def self.logger
-    MustacheRender.config.logger
-  end
-
->>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
   autoload :Adapter, 'mustache_render/adapter'
 
   module Manage

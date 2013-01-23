@@ -102,13 +102,6 @@ module MustacheRender
           error "Unclosed section #{type.inspect}", pos
         end
 
-<<<<<<< HEAD
-=======
-        # puts ""
-        # puts "-----------------------------------------------------"
-        # puts @result
-
->>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
         @result
       end
 
