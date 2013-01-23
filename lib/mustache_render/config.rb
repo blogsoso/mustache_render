@@ -25,7 +25,11 @@ module MustacheRender
     # 默认的渲染媒介
     #
     def default_render_media
+<<<<<<< HEAD
       @default_render_media ||= :db
+=======
+      @default_render_media ||= :file
+>>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
     end
 
     def default_render_media= media
@@ -59,6 +63,19 @@ module MustacheRender
       @_cache_store ||= cache_store
     end
 
+<<<<<<< HEAD
+=======
+    def logger
+      return @_logger if defined?(@_logger)
+
+      @_logger ||= ::Logger.new(STDOUT)
+    end
+
+    def logger= logger
+      @_logger ||= logger
+    end
+
+>>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
     #
     # 是否开启缓存
     #

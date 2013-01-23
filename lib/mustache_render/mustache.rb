@@ -19,6 +19,7 @@ module MustacheRender
     end
 
     def render(data = template, ctx = {})
+<<<<<<< HEAD
       tpl = templateify(data)
  
       return tpl.render(context) if ctx == {}
@@ -26,11 +27,28 @@ module MustacheRender
       begin
         context.push(ctx)
         tpl.render(context)
+=======
+      self.template = data
+
+      return self.template.render(context) if ctx == {}
+
+      begin
+        context.push(ctx)
+        self.template.render(context)
+>>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
       ensure
         context.pop
       end
     end
 
+<<<<<<< HEAD
+=======
+    # 片段树
+    def partials_tree
+      
+    end
+
+>>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
     # Context accessors.
     #
     # view = Mustache.new
@@ -96,7 +114,12 @@ module MustacheRender
 
     def impl_read_file_template name
       # TODO: 对路径的语法需要加强
+<<<<<<< HEAD
       full_path = "#{config.file_template_root_path}/#{self.class.generate_template_name(name, config.file_template_extension)}"
+=======
+      full_path = "#{config.file_template_root_path}/#{name}"
+
+>>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
       begin
         File.read full_path
       rescue
@@ -109,6 +132,11 @@ module MustacheRender
     end
 
     def read_template_from_media name, media
+<<<<<<< HEAD
+=======
+      ::MustacheRender.logger.debug "MustacheRender render -> read template from #{media}: #{name}"
+      # puts "read_template_from_media: #{name} #{media}"
+>>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
       case media
       when :db
         if ::MustacheRender.config.db_template_cache?
@@ -133,8 +161,16 @@ module MustacheRender
     # reading templates from a database. It will be rendered by the
     # context, so all you need to do is return a string.
     def partial(name)
+<<<<<<< HEAD
       puts "self.partial:   #{self.object_id}"
       self.read_template_from_media name, media
+=======
+      name = self.class.generate_template_name name, config.file_template_extension
+
+      # return self.read_template_from_media name, media
+      @_cached_partials ||= {}
+      (@_cached_partials[media] ||= {})[name] ||= self.read_template_from_media name, media
+>>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
     end
 
     def self.partial_cache_key(name, media)
@@ -240,6 +276,19 @@ module MustacheRender
       (@template && @template.is_a?(Template)) || self.class.compiled?
     end
 
+<<<<<<< HEAD
+=======
+    def template
+      return @template if @template
+
+      self.template = ''
+    end
+
+    def template= template
+      @template = templateify(template)
+    end
+
+>>>>>>> 470b53b7c4b5e433b72058d09dcf680f63b76f80
     # template_partial => TemplatePartial
     # template/partial => Template::Partial
     def self.classify(underscored)
