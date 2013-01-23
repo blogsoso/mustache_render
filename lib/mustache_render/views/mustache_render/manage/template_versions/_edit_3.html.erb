@@ -1,0 +1,10 @@
+<%= form_for(@mustache_render_template_version, :url => mustache_render_manage_folder_template_template_version_url(
+  :folder_id => @mustache_render_template_version.folder_id,
+  :template_id => @mustache_render_template_version.template_id,
+  :id => @mustache_render_template_version.id
+)) do |f| %>
+
+<%= render :partial => 'form', :locals => { :f => f } %>
+
+<% end %>
+

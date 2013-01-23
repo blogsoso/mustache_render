@@ -1,0 +1,10 @@
+<h1>新建模板文件夹</h1>
+
+<% if MustacheRender.adapter.rails_2? %>
+  <%= render :partial => 'new_2' %>
+<% else %>
+  <%= render :partial => 'new_3' %>
+<% end %>
+
+<%= link_to "返回列表", mustache_render_manage_folders_url %>
+

@@ -1,0 +1,52 @@
+<h1>模板文件详情</h1>
+
+<div>
+  <% @mustache_render_folder.ancestors.each do |folder| %>
+    <%= link_to h("#{folder.name}"), mustache_render_manage_folder_url(folder) %> >>
+  <% end %>
+
+  <b><%= h "#{@mustache_render_folder.name}" %></b>
+</div>
+
+<div>
+  <div class='field'>
+    <b>文件名:</b> <%= h "#{@mustache_render_template.name}" %>
+  </div>
+
+  <div class='field'>
+    <b>全路径:</b> <%= h "#{@mustache_render_template.full_path}" %>
+  </div>
+
+  <div class='field'>
+    <b>模板代码:</b><br/>
+    <pre style='border: 1px solid #333; background-color: #ccc; padding: 10px;'><%= h @mustache_render_template.content %></pre>
+    <%#= text_area_tag :content, @mustache_render_template.content, :style => 'height: 700px; width: 700px;' %>
+  </div>
+
+  <div class='field'>
+    <b>备注:</b> <br/>
+    <%= h "#{@mustache_render_template.note}" %>
+  </div>
+</div>
+
+<h3>历史版本(<%= @mustache_render_template.template_versions.count %>)</h3>
+<%= render :partial => '/mustache_render/manage/template_versions/list', :locals => {
+  :template_versions => @mustache_render_template.template_versions.first(10)
+} %>
+
+<% if @mustache_render_template.template_versions.count > 10 %>
+  <%= link_to "更多历史版本", mustache_render_manage_folder_template_template_versions_url(
+    :folder_id => @mustache_render_template.folder_id,
+    :template_id => @mustache_render_template.id
+  ) %>
+<% end %>
+
+
+<%= link_to "返回上一级", mustache_render_manage_folder_url(:id => @mustache_render_template.folder_id) %>
+<%= link_to "编辑", edit_mustache_render_manage_folder_template_url(:folder_id => @mustache_render_template.folder_id, :id => @mustache_render_template.id) %>
+
+<%= link_to "历史版本", mustache_render_manage_folder_template_template_versions_url(
+  :folder_id => @mustache_render_template.folder_id,
+  :template_id => @mustache_render_template.id
+) %>
+

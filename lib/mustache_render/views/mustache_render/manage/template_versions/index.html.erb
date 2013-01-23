@@ -1,0 +1,20 @@
+<h1>模板文件详情历史版本列表</h1>
+
+<h3>
+  <%= link_to h("#{@mustache_render_template.full_path}"), mustache_render_manage_folder_template_url(
+    :folder_id => @mustache_render_template.folder_id,
+    :id        => @mustache_render_template.id
+  ) %>
+的历史版本 共(<%= @mustache_render_template.template_versions.count %>)版
+</h3>
+
+<%= render :partial => '/mustache_render/manage/template_versions/list', :locals => {
+  :template_versions => @mustache_render_template_versions
+} %>
+
+<%= link_to '返回现行版本', mustache_render_manage_folder_template_url(
+  :folder_id => @mustache_render_template.folder_id,
+  :id        => @mustache_render_template.id
+) %>
+
+

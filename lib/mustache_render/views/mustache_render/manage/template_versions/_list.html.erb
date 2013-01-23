@@ -1,0 +1,41 @@
+<div class='templates-list'>
+  <% if template_versions.any? %>
+    <% template_versions.each do |template_version| %>
+      <div class='template-item'>
+        <%= link_to h("##{template_version.id} - #{template_version.name}"), mustache_render_manage_folder_template_template_version_url(
+          :folder_id   => template_version.folder_id,
+          :template_id => template_version.template_id,
+          :id          => template_version.id
+        ) %>
+      [user:<%= h(template_version.last_user_id) %>, updated at: <%= template_version.updated_at %>]
+
+      <%= link_to '删除',  mustache_render_manage_folder_template_template_version_url(
+        :folder_id   => template_version.folder_id,
+        :template_id => template_version.template_id,
+        :id          => template_version.id,
+        :return_to   => request.url
+      ), :method => :delete, :data => {
+        :confirm => '你确定要【删除】这个历史版本吗？'
+      }
+    %>
+
+      <%= link_to '还原该版本',  revert_mustache_render_manage_folder_template_template_version_url(
+        :folder_id   => template_version.folder_id,
+        :template_id => template_version.template_id,
+        :id          => template_version.id,
+        :return_to   => request.url
+      ), :method => :post, :data => {
+        :confirm => '你确定要【还原】这个历史版本吗？'
+      }
+    %>
+
+      <br/>
+      <%= h template_version.change_log %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class='empty-list'>
+      没有历史记录
+    </div>
+  <% end %>
+</div>

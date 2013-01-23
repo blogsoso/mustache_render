@@ -1,0 +1,22 @@
+= MustacheRender
+
+This project rocks and uses MIT-LICENSE.
+
+= Rails 3.1.x
+
+routes
+
+```
+  namespace :mustache_render do
+    namespace :manager do
+      resources :folders do
+        resources :templates, :only => [:show, :new, :edit, :update, :create, :destroy]
+      end
+    end
+  end
+```
+
+install:
+
+rails g mustache_render:migration:install
+
