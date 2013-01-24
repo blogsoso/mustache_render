@@ -2,9 +2,6 @@ require 'spec_helper'
 
 describe 'MustacheRender::Mustache.db_render' do
   before :each do
-    MustacheRender.configure do |config|
-      config.file_template_root_path = ROOT_PATH + '/resources/templates'
-    end
   end
 
   it 'template scan_tags test' do

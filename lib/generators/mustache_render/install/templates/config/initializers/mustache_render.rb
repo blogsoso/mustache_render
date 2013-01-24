@@ -23,17 +23,19 @@ MustacheRender.configure do |config|
   # 当文件模板不存在时候是否抛出异常
   config.raise_on_file_template_miss = true
 
+  config.logger = Rails.logger
+
   ### 模板的相关配置 ###########################
-  # 数据库模板是否需要缓存
-  config.db_template_cache   = true
-  # 文件模板是否需要缓存
-  config.file_template_cache = false
-  # 数据库模板缓存过期时间
-  config.db_template_cache_expires_in   = 1.hours
-  # 文件模板缓存的过期时间, 注意文件系统没有自动清理缓存的机制，建议设置的短一些
-  config.file_template_cache_expires_in = 1.minutes
-  # 缓存的媒介
-  config.cache_store                    = Rails.cache
+  # # 数据库模板是否需要缓存
+  # config.db_template_cache   = true
+  # # 文件模板是否需要缓存
+  # config.file_template_cache = false
+  # # 数据库模板缓存过期时间
+  # config.db_template_cache_expires_in   = 1.hours
+  # # 文件模板缓存的过期时间, 注意文件系统没有自动清理缓存的机制，建议设置的短一些
+  # config.file_template_cache_expires_in = 1.minutes
+  # # 缓存的媒介
+  # config.cache_store                    = Rails.cache
 
   # 版本适配器的配置
   config.adapter_configure do |adapter|

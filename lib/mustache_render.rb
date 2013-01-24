@@ -21,6 +21,7 @@ module MustacheRender
 
   module CoreExt
     autoload :BaseControllerExt,   'mustache_render/core_ext/base_controller_ext'
+    # autoload :ActionViewHandler,   'mustache_render/core_ext/action_view_handler'
   end
 
   module Controllers

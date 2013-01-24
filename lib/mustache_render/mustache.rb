@@ -116,24 +116,27 @@ module MustacheRender
 
     def read_template_from_media name, media
       ::MustacheRender.logger.debug "MustacheRender render -> read template from #{media}: #{name}"
-      # puts "read_template_from_media: #{name} #{media}"
+
       case media
       when :db
-        if ::MustacheRender.config.db_template_cache?
-          self.class.fetch_partial_cache name, media, :expires_in => ::MustacheRender.config.db_template_cache_expires_in do
-            impl_read_db_template name
-          end
-        else
-          impl_read_db_template name
-        end
+        # if ::MustacheRender.config.db_template_cache?
+        #   self.class.fetch_partial_cache name, media, :expires_in => ::MustacheRender.config.db_template_cache_expires_in do
+        #     impl_read_db_template name
+        #   end
+        # else
+        #   impl_read_db_template name
+        # end
+        impl_read_file_template name
       when :file
-        if ::MustacheRender.config.file_template_cache?
-          self.class.fetch_partial_cache name, media, :expires_in => ::MustacheRender.config.file_template_cache_expires_in do
-            impl_read_file_template name
-          end
-        else
-          impl_read_file_template name
-        end
+        # if ::MustacheRender.config.file_template_cache?
+        #   self.class.fetch_partial_cache name, media, :expires_in => ::MustacheRender.config.file_template_cache_expires_in do
+        #     impl_read_file_template name
+        #   end
+        # else
+        #   impl_read_file_template name
+        # end
+
+        impl_read_file_template name
       end
     end
 
@@ -148,34 +151,34 @@ module MustacheRender
       (@_cached_partials[media] ||= {})[name] ||= self.read_template_from_media name, media
     end
 
-    def self.partial_cache_key(name, media)
-      raise 'options key: :media must in(:file, :db)' unless [:file, :db].include?(media)
-      "MustacheRender::Mustache#Template.cache##{media}##{name}"
-    end
-
-    def self.exist_partial_cache?(name, media)
-      ::MustacheRender.config.cache.exist?(self.partial_cache_key(name, media))
-    end
-
-    def self.delete_partial_cache(name, media)
-      ::MustacheRender.config.cache.delete(self.partial_cache_key(name, media))
-    end
-
-    def self.fetch_partial_cache(name, media, options={}, &block)
-      ::MustacheRender.config.cache.fetch(self.partial_cache_key(name, media), options) do
-        if block_given?
-          block.call
-        end
-      end
-    end
-
-    def self.read_partial_cache(name, media)
-      ::MustacheRender.config.cache.read(self.partial_cache_key(name, media))
-    end
-
-    def self.write_partial_cache(name, media, value, options={})
-      ::MustacheRender.config.cache.write(self.partial_cache_key(name, media), value, options)
-    end
+##    def self.partial_cache_key(name, media)
+##      raise 'options key: :media must in(:file, :db)' unless [:file, :db].include?(media)
+##      "MustacheRender::Mustache#Template.cache##{media}##{name}"
+##    end
+##
+##    def self.exist_partial_cache?(name, media)
+##      ::MustacheRender.config.cache.exist?(self.partial_cache_key(name, media))
+##    end
+##
+##    def self.delete_partial_cache(name, media)
+##      ::MustacheRender.config.cache.delete(self.partial_cache_key(name, media))
+##    end
+##
+##    def self.fetch_partial_cache(name, media, options={}, &block)
+##      ::MustacheRender.config.cache.fetch(self.partial_cache_key(name, media), options) do
+##        if block_given?
+##          block.call
+##        end
+##      end
+##    end
+##
+##    def self.read_partial_cache(name, media)
+##      ::MustacheRender.config.cache.read(self.partial_cache_key(name, media))
+##    end
+##
+##    def self.write_partial_cache(name, media, value, options={})
+##      ::MustacheRender.config.cache.write(self.partial_cache_key(name, media), value, options)
+##    end
 
     # Override this to provide custom escaping.
     #
