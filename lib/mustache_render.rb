@@ -2,13 +2,15 @@
 require 'mustache_render/adapter'
 require 'mustache_render/config'
 require 'mustache_render/mustache'
+# require 'benchmark'
 
 module MustacheRender
   def self.logger
     MustacheRender.config.logger
   end
 
-  autoload :Adapter, 'mustache_render/adapter'
+  autoload :Adapter,       'mustache_render/adapter'
+  autoload :PopulatorBase, 'mustache_render/populator_base'
 
   module Manage
     autoload :BaseHelper,          'mustache_render/helpers/mustache_render/manage/base_helper'

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # #
 # # 注册action view handler
 # #

@@ -6,7 +6,7 @@ test/dummy/log/*.log
 test/dummy/tmp/
 test/dummy/.sass-cache
 
-tags
+**tags
 **.gem
 **.swp
 **.lock

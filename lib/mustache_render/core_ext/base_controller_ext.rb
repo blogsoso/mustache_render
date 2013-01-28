@@ -11,23 +11,23 @@ module MustacheRender::CoreExt
     end
 
     module SharedMethods
-      def mustache_render template='', mustache={}
-        result = ::MustacheRender::Mustache.render(template, mustache)
-        impl_mustache_result_render result
-      end
+      # 是否是mustache_render调试模式
+      def mustache_render_at_debug_mode?
+        return @_mustache_render_at_debug_mode if defined?(@_mustache_render_at_debug_mode)
 
-      def mustache_file_render template_path=nil, mustache={}
-        result = ::MustacheRender::Mustache.file_render(template_path, mustache)
-        impl_mustache_result_render result
+        @_mustache_render_at_debug_mode = Rails.env.development? && params[:mustache_render_debug]
       end
 
       #
-      # 使用数据库中的模板进行渲染
-      # - template_path: 模板的路径
+      # 定义了三个方法：
+      #   render template, data
+      #   file_render template_path, data
+      #   db_render template_path, data
       #
-      def mustache_db_render(template_path=nil, mustache={})
-        result = ::MustacheRender::Mustache.db_render(template_path, mustache)
-        impl_mustache_result_render result
+      [:render, :file_render, :db_render, :impl_render].each do |method_name|
+        define_method "mustache_#{method_name}".to_sym do |path_or_template, data|
+          impl_mustache_result_render method_name, path_or_template, data
+        end
       end
     end
 
@@ -39,8 +39,15 @@ module MustacheRender::CoreExt
 
       private
 
-      def impl_mustache_result_render(result)
-        raw result
+      def impl_mustache_result_render(method_name, path_or_template='', data={})
+        if mustache_render_at_debug_mode?
+          ::MustacheRender.logger.debug <<-DEBUG_TEXT
+>>> impl_mustache_result_render##{method_name} path_or_template: #{path_or_template}
+>>> data: #{data.inspect}
+DEBUG_TEXT
+        end
+
+        raw(::MustacheRender::Mustache.send method_name, path_or_template, data)
       end
     end
 
@@ -49,8 +56,12 @@ module MustacheRender::CoreExt
 
       private
 
-      def impl_mustache_result_render(result)
-        render :text => result
+      def impl_mustache_result_render(method_name, path_or_template='', data={})
+        if mustache_render_at_debug_mode?
+          render :json => data
+        else
+          render :text => (::MustacheRender::Mustache.send method_name, path_or_template, data)
+        end
       end
     end
   end

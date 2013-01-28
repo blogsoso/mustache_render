@@ -3,7 +3,7 @@ module MustacheRender
   VERSION_NUMBERS = [
     VERSION_MAJOR = 0,
     VERSION_MINOR = 0,
-    VERSION_BUILD = 11,
+    VERSION_BUILD = 14,
   ]
 
   VERSION = VERSION_NUMBERS.join(".")

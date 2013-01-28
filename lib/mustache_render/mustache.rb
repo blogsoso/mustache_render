@@ -1,9 +1,13 @@
 # -*- encoding : utf-8 -*-
 require 'mustache_render/mustache/template'
 require 'mustache_render/mustache/context'
+require 'mustache_render/mustache/data'
 
 module MustacheRender
   class Mustache
+    # 可用的渲染的方法
+    # AVAILABLE_RENDER_METHODS = [:render, :file_render, :db_render].freeze
+
     def self.render(*args)
       new.render(*args)
     end
@@ -19,26 +23,19 @@ module MustacheRender
     end
 
     def render(data = template, ctx = {})
-      self.template = data
-
-      return self.template.render(context) if ctx == {}
-
-      begin
-        context.push(ctx)
-        self.template.render(context)
-      ensure
-        context.pop
+      impl_logger :level => :debug, :operation => 'MustacheRender::Mustache.render' do
+        impl_template_render data, ctx
       end
     end
 
-    # 片段树
+    # TODO: 语法检查,片段树
     def partials_tree
-      
+
     end
 
     # Context accessors.
     #
-    # view = Mustache.new
+    # view = ::MustacheRender::Mustache.new
     # view[:name] = "Jon"
     # view.template = "Hi, {{name}}!"
     # view.render # => "Hi, Jon!"
@@ -57,6 +54,15 @@ module MustacheRender
       @context ||= Context.new(self)
     end
 
+    # 使用default_media 进行渲染
+    def self.impl_render(name, context={})
+      self.new.send :impl_render, name, context
+    end
+
+    def impl_render name, context={}
+      send "#{::MustacheRender.config.default_render_media}_render".to_sym, name, context
+    end
+
     # Given a file name and an optional context, attempts to load and
     # render the file as a template.
     def self.file_render(name, context = {})
@@ -66,8 +72,10 @@ module MustacheRender
     # Given a file name and an optional context, attempts to load and
     # render the file as a template.
     def file_render(name, context = {})
-      @media = :file
-      render(partial(name), context)
+      impl_logger :level => :debug, :operation => "#{self.class}.file_render" do
+        @media = :file
+        render(partial(name), context)
+      end
     end
 
     def self.db_render(full_path, context={})
@@ -75,8 +83,10 @@ module MustacheRender
     end
 
     def db_render(full_path, context={})
-      @media = :db
-      render(partial(full_path), context)
+      impl_logger :level => :debug, :operation => "#{self.class}.db_render" do
+        @media = :db
+        render(partial(full_path), context)
+      end
     end
 
     def impl_read_db_template name
@@ -115,28 +125,32 @@ module MustacheRender
     end
 
     def read_template_from_media name, media
-      ::MustacheRender.logger.debug "MustacheRender render -> read template from #{media}: #{name}"
+      # ::MustacheRender.logger.debug "MustacheRender render -> read template from #{media}: #{name}"
 
-      case media
-      when :db
-        # if ::MustacheRender.config.db_template_cache?
-        #   self.class.fetch_partial_cache name, media, :expires_in => ::MustacheRender.config.db_template_cache_expires_in do
-        #     impl_read_db_template name
-        #   end
-        # else
-        #   impl_read_db_template name
-        # end
-        impl_read_file_template name
-      when :file
-        # if ::MustacheRender.config.file_template_cache?
-        #   self.class.fetch_partial_cache name, media, :expires_in => ::MustacheRender.config.file_template_cache_expires_in do
-        #     impl_read_file_template name
-        #   end
-        # else
-        #   impl_read_file_template name
-        # end
+      impl_logger :level => :debug,
+        :operation => "MustacheRender render -> read template from #{media}: #{name}" do
 
-        impl_read_file_template name
+        case media
+        when :db
+          # if ::MustacheRender.config.db_template_cache?
+          #   self.class.fetch_partial_cache name, media, :expires_in => ::MustacheRender.config.db_template_cache_expires_in do
+          #     impl_read_db_template name
+          #   end
+          # else
+          #   impl_read_db_template name
+          # end
+          impl_read_file_template name
+        when :file
+          # if ::MustacheRender.config.file_template_cache?
+          #   self.class.fetch_partial_cache name, media, :expires_in => ::MustacheRender.config.file_template_cache_expires_in do
+          #     impl_read_file_template name
+          #   end
+          # else
+          #   impl_read_file_template name
+          # end
+
+          impl_read_file_template name
+        end
       end
     end
 
@@ -146,39 +160,38 @@ module MustacheRender
     def partial(name)
       name = self.class.generate_template_name name, config.file_template_extension
 
-      # return self.read_template_from_media name, media
       @_cached_partials ||= {}
       (@_cached_partials[media] ||= {})[name] ||= self.read_template_from_media name, media
     end
 
-##    def self.partial_cache_key(name, media)
-##      raise 'options key: :media must in(:file, :db)' unless [:file, :db].include?(media)
-##      "MustacheRender::Mustache#Template.cache##{media}##{name}"
-##    end
-##
-##    def self.exist_partial_cache?(name, media)
-##      ::MustacheRender.config.cache.exist?(self.partial_cache_key(name, media))
-##    end
-##
-##    def self.delete_partial_cache(name, media)
-##      ::MustacheRender.config.cache.delete(self.partial_cache_key(name, media))
-##    end
-##
-##    def self.fetch_partial_cache(name, media, options={}, &block)
-##      ::MustacheRender.config.cache.fetch(self.partial_cache_key(name, media), options) do
-##        if block_given?
-##          block.call
-##        end
-##      end
-##    end
-##
-##    def self.read_partial_cache(name, media)
-##      ::MustacheRender.config.cache.read(self.partial_cache_key(name, media))
-##    end
-##
-##    def self.write_partial_cache(name, media, value, options={})
-##      ::MustacheRender.config.cache.write(self.partial_cache_key(name, media), value, options)
-##    end
+    ##    def self.partial_cache_key(name, media)
+    ##      raise 'options key: :media must in(:file, :db)' unless [:file, :db].include?(media)
+    ##      "MustacheRender::Mustache#Template.cache##{media}##{name}"
+    ##    end
+    ##
+    ##    def self.exist_partial_cache?(name, media)
+    ##      ::MustacheRender.config.cache.exist?(self.partial_cache_key(name, media))
+    ##    end
+    ##
+    ##    def self.delete_partial_cache(name, media)
+    ##      ::MustacheRender.config.cache.delete(self.partial_cache_key(name, media))
+    ##    end
+    ##
+    ##    def self.fetch_partial_cache(name, media, options={}, &block)
+    ##      ::MustacheRender.config.cache.fetch(self.partial_cache_key(name, media), options) do
+    ##        if block_given?
+    ##          block.call
+    ##        end
+    ##      end
+    ##    end
+    ##
+    ##    def self.read_partial_cache(name, media)
+    ##      ::MustacheRender.config.cache.read(self.partial_cache_key(name, media))
+    ##    end
+    ##
+    ##    def self.write_partial_cache(name, media, value, options={})
+    ##      ::MustacheRender.config.cache.write(self.partial_cache_key(name, media), value, options)
+    ##    end
 
     # Override this to provide custom escaping.
     #
@@ -191,56 +204,6 @@ module MustacheRender
     # Returns a String
     def escapeHTML(str)
       CGI.escapeHTML(str)
-    end
-
-    #
-    # Private API
-    #
-
-    # When given a symbol or string representing a class, will try to produce an
-    # appropriate view class.
-    # e.g.
-    #   Mustache.view_namespace = Hurl::Views
-    #   Mustache.view_class(:Partial) # => Hurl::Views::Partial
-    def self.view_class(name)
-      if name != classify(name.to_s)
-        name = classify(name.to_s)
-      end
-
-      # Emptiness begets emptiness.
-      if name.to_s == ''
-        return Mustache
-      end
-
-      file_name = underscore(name)
-
-      name = "#{view_namespace}::#{name}"
-
-      if const = const_get!(name)
-        const
-      elsif File.exists?(file = "#{view_path}/#{file_name}.rb")
-        require "#{file}".chomp('.rb')
-        const_get!(name) || Mustache
-      else
-        Mustache
-      end
-    end
-
-    # Supercharged version of Module#const_get.
-    #
-    # Always searches under Object and can find constants by their full name,
-    #   e.g. Mustache::Views::Index
-    #
-    # name - The full constant name to find.
-    #
-    # Returns the constant if found
-    # Returns nil if nothing is found
-    def self.const_get!(name)
-      name.split('::').inject(Object) do |klass, name|
-        klass.const_get(name)
-      end
-    rescue NameError
-      nil
     end
 
     # Has this template already been compiled? Compilation is somewhat
@@ -274,7 +237,7 @@ module MustacheRender
       end.join('::')
     end
 
-    #   TemplatePartial => template_partial
+    # TemplatePartial => template_partial
     # Template::Partial => template/partial
     # Takes a string but defaults to using the current class' name.
     def self.underscore(classified = name)
@@ -313,5 +276,42 @@ module MustacheRender
     def self.inheritable_config_for(attr_name, default)
       superclass.respond_to?(attr_name) ? superclass.send(attr_name) : default
     end
+
+    private
+
+    def impl_logger options={}
+      level = options[:level] || :debug
+
+      result = nil
+
+      if block_given?
+        start_at = Time.now
+        result = yield
+        ms = ((Time.now - start_at) * 1000).to_i
+        MustacheRender.logger.send level, impl_format_log_entry(
+          "#{options[:operation]} (#{ms}ms)", options[:message]
+        )
+      end
+
+      result
+    end
+
+    def impl_format_log_entry(operation, message = nil)
+      "  \033[4;34;1m#{operation}\033[0m   \033[0;1m#{message}\033[0m"
+    end
+
+    def impl_template_render(data=template, ctx={})
+      self.template = data
+
+      return self.template.render(context) if ctx == {}
+
+      begin
+        context.push(ctx)
+        self.template.render(context)
+      ensure
+        context.pop
+      end
+    end
+
   end
 end

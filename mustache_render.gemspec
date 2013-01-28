@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "Summary of MustacheRender."
   s.description = "Description of MustacheRender."
 
-  s.files = Dir["{app,config,db,lib,spec}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,config,db,lib,spec}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_dependency "awesome_nested_set"
 
