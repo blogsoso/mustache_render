@@ -37,9 +37,8 @@ module MustacheRender
     #
     #   render template
     #   file_render template_path
-    #   db_render   template_path
     #
-    [:render, :file_render, :db_render, :impl_render].each do |method_name|
+    [:render, :file_render, :impl_render].each do |method_name|
       define_method method_name do |path_or_template=nil|
         @context.send "mustache_#{method_name}".to_sym, "#{path_or_template || @template}", @data
       end
@@ -78,7 +77,7 @@ module MustacheRender
       #
       # 定义了
       #
-      [:render, :file_render, :db_render, :impl_render].each do |method_name|
+      [:render, :file_render, :impl_render].each do |method_name|
         define_method method_name do |options|
           self.new(options).send method_name
         end

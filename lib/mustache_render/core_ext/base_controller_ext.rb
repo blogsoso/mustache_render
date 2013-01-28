@@ -22,9 +22,8 @@ module MustacheRender::CoreExt
       # 定义了三个方法：
       #   render template, data
       #   file_render template_path, data
-      #   db_render template_path, data
       #
-      [:render, :file_render, :db_render, :impl_render].each do |method_name|
+      [:render, :file_render, :impl_render].each do |method_name|
         define_method "mustache_#{method_name}".to_sym do |path_or_template, data|
           impl_mustache_result_render method_name, path_or_template, data
         end

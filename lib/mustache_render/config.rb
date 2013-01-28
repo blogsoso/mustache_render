@@ -95,58 +95,6 @@ module MustacheRender
       @_logger ||= logger
     end
 
-    #  #
-    #  # 是否开启缓存
-    #  #
-    #  def db_template_cache?
-    #    if defined?(@_db_template_cache)
-    #      @_db_template_cache
-    #    else
-    #      true
-    #    end
-    #  end
-
-    #  #
-    #  # 是否开启缓存
-    #  #
-    #  def file_template_cache?
-    #    if defined?(@_file_template_cache)
-    #      @_file_template_cache
-    #    else
-    #      false
-    #    end
-    #  end
-
-    #  #
-    #  # 设置是否启用缓存
-    #  #
-    #  def db_template_cache= user_cache
-    #    @_db_template_cache = user_cache unless defined?(@_db_template_cache)
-    #  end
-
-    #  #
-    #  # 设置是否启用缓存
-    #  #
-    #  def file_template_cache= user_cache
-    #    @_file_template_cache = user_cache unless defined?(@_file_template_cache)
-    #  end
-
-    #  def db_template_cache_expires_in
-    #    @db_template_cache_expires_in ||= 1.hours
-    #  end
-
-    #  def file_template_cache_expires_in
-    #    @file_template_cache_expires_in ||= 5.minutes
-    #  end
-
-    #  def db_template_cache_expires_in= expires_in
-    #    @db_template_cache_expires_in ||= expires_in
-    #  end
-
-    #  def file_template_cache_expires_in= expires_in
-    #    @file_template_cache_expires_in ||= expires_in
-    #  end
-
     def manage_center_need_login?
       if defined?(@manage_center_need_login)
         @manage_center_need_login
@@ -175,22 +123,6 @@ module MustacheRender
       @file_template_root_path ||= path
     end
 
-    # def action_view_handler_extension
-    #   @action_view_handler_extension ||= :mustache
-    # end
-
-    # def action_view_handler_extension= name
-    #   @action_view_handler_extension ||= name
-    # end
-
-    def db_template_extension
-      @db_template_extension ||= '.mustache'
-    end
-
-    def db_template_extension= name
-      @db_template_extension ||= name
-    end
-
     def file_template_extension
       @file_template_extension ||= '.mustache'
     end
@@ -206,15 +138,6 @@ module MustacheRender
 
     def raise_on_file_template_miss?
       defined?(@raise_on_file_template_miss) ? @raise_on_file_template_miss : true
-    end
-
-    # 是否抛出数据库模板miss的异常
-    def raise_on_db_template_miss= _bool
-      @raise_on_db_template_miss = _bool unless defined?(@raise_on_db_template_miss)
-    end
-
-    def raise_on_db_template_miss?
-      defined?(@raise_on_db_template_miss) ? @raise_on_db_template_miss : true
     end
 
     def raise_on_context_miss?
@@ -238,9 +161,3 @@ module MustacheRender
   end
 end
 
-# if ::MustacheRender.config.action_view_handler?
-#   ActionView::Template.register_template_handler(
-#     ::MustacheRender.config.db_template_extension.to_sym,
-#     ::MustacheRender::CoreExt::ActionViewHandler
-#   )
-# end

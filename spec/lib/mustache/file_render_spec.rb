@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 
-describe 'MustacheRender::Mustache.db_render' do
+describe 'MustacheRender::Mustache.xxx_render' do
   before :each do
   end
 

@@ -7,23 +7,11 @@ module MustacheRender
         self.merge! options
       end
 
-      [:render, :file_render, :db_render, :impl_render].each do |method_name|
+      [:render, :file_render, :impl_render].each do |method_name|
         define_method method_name do |path_or_template|
           ::MustacheRender::Mustache.send method_name, path_or_template, self
         end
       end
-
-      # def render(template='')
-      #   ::MustacheRender::Mustache.render template, self
-      # end
-
-      # def file_render path
-      #   ::MustacheRender::Mustache.file_render path, self
-      # end
-
-      # def db_render path
-      #   ::MustacheRender::Mustache.db_render path, self
-      # end
 
       def []=(name, value)
         result = super(name.to_s, value)

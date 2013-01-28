@@ -15,9 +15,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib,spec}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
 
-  s.add_dependency "awesome_nested_set"
-
-  # s.add_dependency "rails", "~> 3.2.10"
-
   s.add_development_dependency "sqlite3"
 end

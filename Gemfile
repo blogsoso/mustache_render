@@ -6,8 +6,6 @@ source "http://rubygems.org"
 
 gemspec
 
-gem "awesome_nested_set"
-
 # jquery-rails is used by the dummy application
 # gem "jquery-rails"
 

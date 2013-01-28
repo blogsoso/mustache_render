@@ -4,22 +4,10 @@ require 'rails/generators/migration'
 
 module MustacheRender
     class InstallGenerator < Rails::Generators::Base
-      include Rails::Generators::Migration
-
-      desc "Generates MustacheRender database migration, models"
+      desc "Generates MustacheRender"
 
       def copy_files
-        orm = options[:orm].to_s
-        orm = "active_record" unless %w{active_record}.include?(orm)
-        %w(mustache_render_folder mustache_render_template mustache_render_manager mustache_render_template_version).each do |file|
-          copy_model(orm, file)
-        end
-
         template "config/initializers/mustache_render.rb", "config/initializers/mustache_render.rb"
-
-        if self.class.orm_has_migration?
-          migration_template "#{orm}/migration.rb", 'db/migrate/mustache_render_migration'
-        end
       end
 
       def self.orm
@@ -43,7 +31,7 @@ module MustacheRender
           "%.3d" % (current_migration_number(dirname) + 1)
         end
       end
-        
+
       private
 
       def copy_model(orm, name)
