@@ -79,7 +79,7 @@ module MustacheRender
       # 定义了
       #
       [:render, :file_render, :db_render, :impl_render].each do |method_name|
-        define_method method_name do |options={}|
+        define_method method_name do |options|
           self.new(options).send method_name
         end
       end
