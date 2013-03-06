@@ -34,11 +34,6 @@ MustacheRender.configure do |config|
   config.adapter_configure do |adapter|
 
   end
-
-  # config.manage_center_need_login      = true
-  # config.manage_center_need_login      = false
-  # config.user_login_url             = '/login'
-  # config.manager_authenticate_fail_url = '/auth_fail'
 end
 
 
