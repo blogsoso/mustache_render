@@ -4,34 +4,8 @@
 #
 module MustacheRender
   module RenderAble
-    class ClassMustachePopulator
-      attr_reader :records_clazz
-
-      def initialize records_clazz
-        @records_clazz = records_clazz
-      end
-
-      class << self
-        attr_accessor :config
-
-        def configure
-          yield self.config ||= MustachePopulatorConfig.new
-        end
-      end
-    end
-
-    class MustachePopulatorConfig
-      def fields_filters
-        @fields_filters ||= ::MustacheRender::FieldsFilterUtil.new
-      end
-
-      def fields_filters= _fitlers={}
-        @fields_filters ||= ::MustacheRender::FieldsFilterUtil.new(_fitlers)
-      end
-    end
-
     class InstanceMustachePopulator
-      attr_reader :record, :fields_filter
+      attr_reader :record, :fields_filters
       attr_accessor :view_context
 
       def initialize *args, &block
@@ -43,6 +17,18 @@ module MustacheRender
           raise ArgumentError.new('miss first argument as record')
         end
 
+        # 过滤条件
+        if options[:fields_filters].is_a?(::MustacheRender::FieldsFilterUtil)
+          @fields_filters = options[:fields_filters]
+        elsif options[:fields_filters].is_a?(::Hash)
+          @fields_filters = ::MustacheRender::FieldsFilterUtil.new(
+            options[:fields_filters]
+          )
+        else
+          @fields_filters = ::MustacheRender::FieldsFilterUtil.new
+        end
+
+        @fields_filters.freeze
       end
 
       def to_mustache options={}, &block
@@ -69,15 +55,10 @@ module MustacheRender
         end
       end
 
-      def fields_filter
-        @fields_filter ||= self.class.fields_filters
-      end
-
       private
 
       def impl_init_config_from_options options={}
-        @view_context  = options[:view_context] if options.key?(:view_context)
-        @fields_filter = options[:fields_filter] if options.key?(:fields_filter)
+        @view_context   = options[:view_context] if options.key?(:view_context)
       end
 
     end
@@ -100,29 +81,16 @@ module MustacheRender
 
         populator_name = [String, Symbol].include?(args.first) ? args.first.to_s : 'mustache_populator'
 
-        ### 扩展类 mustache_populator ##################################
+        _fields_filters_options = { :fields_filters => options[:fields_filters] }
+
+        ### 扩展实例的populator ##############################
         eval <<-END_EVAL
-          self.class_eval do
-            def self.#{populator_name}
-              @#{populator_name} ||= ::MustacheRender::RenderAble::ClassMustachePopulator.new(self)
-            end
-
-            (MustacheRender::ArrayUtil.init(#{args})).each do |populator_module|
-              if populator_module.is_a?(Module)
-                if defined?(populator_module::ClassMethods) && populator_module::ClassMethods.is_a?(Module)
-                  self.#{populator_name}.send :extend, populator_module::ClassMethods
-                end
-              end
-            end
-          end
-END_EVAL
-
-         ### 扩展实例的populator ##############################
-         eval <<-END_EVAL
             self.class_eval do
               def #{populator_name}
                 return @#{populator_name} if @#{populator_name}.is_a?(::MustacheRender::RenderAble::InstanceMustachePopulator)
-                @#{populator_name} ||= ::MustacheRender::RenderAble::InstanceMustachePopulator.new(self)
+                @#{populator_name} ||= ::MustacheRender::RenderAble::InstanceMustachePopulator.new(
+                  self, #{_fields_filters_options}
+                )
 
                 (MustacheRender::ArrayUtil.init(#{args})).each do |populator_module|
                   if defined?(populator_module::InstanceMethods) && populator_module::InstanceMethods.is_a?(Module)

@@ -10,7 +10,9 @@ describe ::MustacheRender::RenderAble do
         private
 
         def impl_to_mustache result, options={}, &block
+
         end
+
       end
     end
 
@@ -25,7 +27,11 @@ describe ::MustacheRender::RenderAble do
         @address = param[:address]
       end
 
-      self.load_musatche_populator ShopDataPopulator
+      self.load_musatche_populator ShopDataPopulator, :fields_filters => {
+        :default => {
+          :deals => :all
+        }
+      }
     end
 
     it 'to_mustache Test' do
@@ -42,6 +48,11 @@ describe ::MustacheRender::RenderAble do
         result.merge!(:name => 'happy jinzhong', :age => 28)
       end.render('name:{{name}}  age:{{age}}').should == 'name:happy jinzhong  age:28'
 
+      a.mustache_populator.fields_filters.should == {:default => {
+        :deals => :all
+      }}
+
+      expect { a.mustache_populator.fields_filters[:a] = 'a' }.to raise_error(RuntimeError)
     end
 
     it 'nil to_mustache' do
