@@ -1,16 +1,11 @@
 # -*- encoding : utf-8 -*-
 require 'cgi'
 
-require 'mustache_render/mustache/parser'
-require 'mustache_render/mustache/generator'
+require "#{File.dirname(__FILE__)}/parser"
+require "#{File.dirname(__FILE__)}/generator"
 
 module MustacheRender
   class Mustache
-    # 模板缺失
-    class TemplateMiss < ::RuntimeError
-
-    end
-
     # A Template represents a Mustache template. It compiles and caches
     # a raw string template into something usable.
     #

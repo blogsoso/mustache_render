@@ -7,6 +7,13 @@ describe 'MustacheRender::Mustache.db_render' do
     end
   end
 
+  it 'file render generate template value' do
+    fr = MustacheRender::Mustache.new
+
+    result = fr.render "{{render}}:{{context}}", {:render => 'render', :context => 'context'}
+    result.should == "render:context"
+  end
+
   it 'template scan_tags test' do
     result = MustacheRender::Mustache.file_render 'scan_tags/1', {}
 
