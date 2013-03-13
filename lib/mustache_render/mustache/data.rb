@@ -3,7 +3,6 @@ module MustacheRender
   class Mustache::Data < ::Hash
     def initialize(options={})
       self.merge! options
-      # self.deep_symbolize_keys!
     end
 
     [:render, :file_render, :impl_render].each do |method_name|
@@ -62,12 +61,6 @@ module MustacheRender
         else
           result
         end
-
-        # if result.is_a?(Hash) && !(result.is_a?(self.class))
-        #   self[method_name] = self.class.new(result)
-        # else
-        #   result
-        # end
       end
     end
 

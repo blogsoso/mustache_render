@@ -1,121 +1,138 @@
 # -*- encoding : utf-8 -*-
-#
-# include MustacheRender::RenderAble
-#
 module MustacheRender
   module RenderAble
-    class InstanceMustachePopulator
-      attr_reader :record, :fields_filters
-      attr_accessor :view_context
-
-      def initialize *args, &block
-        options = ::MustacheRender::ArrayUtil.extract_options!(args)
-
-        @record = args.first
-
-        if @record.nil?
-          raise ArgumentError.new('miss first argument as record')
-        end
-
-        # 过滤条件
-        if options[:fields_filters].is_a?(::MustacheRender::FieldsFilterUtil)
-          @fields_filters = options[:fields_filters]
-        elsif options[:fields_filters].is_a?(::Hash)
-          @fields_filters = ::MustacheRender::FieldsFilterUtil.new(
-            options[:fields_filters]
-          )
-        else
-          @fields_filters = ::MustacheRender::FieldsFilterUtil.new
-        end
-
-        @fields_filters.freeze
+    class MustachePopulatorConfig
+      def filters_util
+        @filters_util ||= ::MustacheRender::FieldsFilterUtil.new
       end
 
-      def to_mustache options={}, &block
+      def filters_util= options={}
+        @filters_util ||= ::MustacheRender::FieldsFilterUtil.new(options)
+      end
+    end
 
-        result = ::MustacheRender::Mustache::Data.new(
-          :miss? => false
-        )
+    module SharedMethods
+      [:render, :file_render].each do |_render_method|
+        define_method "mustache_#{_render_method}" do |*args, &block|
+          options = ::MustacheRender::ArrayUtil.extract_options!(args)
+          template_or_path = args.first || ''
+          ::MustacheRender::Mustache.send(_render_method, template_or_path, self.to_mustache(options, &block))
+        end
+      end
+    end
 
-        self.send :impl_to_mustache, result, options, &block if defined?(impl_to_mustache)
+    module ForRecord
+      def self.included base
+        base.class_eval do
+          include ::MustacheRender::RenderAble::SharedMethods
+          extend  ClassMethods
+          include InstanceMethods
+        end
+      end
 
-        if block_given?
-          if(_block_result = block.call result).is_a?(Hash)
-            result.merge! _block_result
+      # 类方法
+      module ClassMethods
+        def load_mustache_populator *args, &block
+          options = ::MustacheRender::ArrayUtil.extract_options!(args)
+          populator_moules = args # 组装器
+
+          populator_moules.each do |populator_moule|
+            self.send :include, populator_moule if populator_moule.is_a?(Module)
+          end
+
+          if block_given?
+            block.call(
+              self.mustache_populator_config
+            )
           end
         end
 
-        case result
-        when ::MustacheRender::Mustache::Data
-          result
-        when ::Hash
-          ::MustacheRender::Mustache.new result
-        else
-          ::MustacheRender::Mustache.new {}
+        def mustache_populator_config
+          @mustache_populator_config ||= ::MustacheRender::RenderAble::MustachePopulatorConfig.new
         end
       end
 
-      private
+      module InstanceMethods
+        def mustache_populator_config
+          self.class.mustache_populator_config
+        end
 
-      def impl_init_config_from_options options={}
-        @view_context   = options[:view_context] if options.key?(:view_context)
+        def to_mustache *args, &block
+          options = ::MustacheRender::ArrayUtil.extract_options!(args)
+          populator_name = args.first || :default
+
+          result = ::MustacheRender::Mustache::Data.new(
+            :nil? => false
+          )
+
+          filter_util = self.mustache_populator_config.filters_util.load(options[:filter] || :default)
+
+          self.impl_to_mustache result, filter_util, options, &block if defined?(self.impl_to_mustache)
+
+          if block_given?
+            if(_block_result = block.call result).is_a?(::Hash)
+              result.merge! _block_result
+            end
+          end
+
+          result
+        end
       end
-
     end
 
-    def self.included base
-      base.class_eval do
-        extend ClassExtendsMethods
-      end
-    end
+    module ForList
+      include ::MustacheRender::RenderAble::SharedMethods
 
-    module ClassExtendsMethods
-      # 加载组装器
-      def load_musatche_populator *args, &block
+      def to_mustache *args, &block
         options = ::MustacheRender::ArrayUtil.extract_options!(args)
 
-        # 加载实例的 to_mustache 方法等
-        args.each do |populator_module|
-          self.send :include, populator_module if populator_module.is_a?(Module)
+        result = {
+          :any? => self.any?,
+          :list => self.map do |item|
+            item.to_mustache *args, &block
+          end
+        }
+
+        # 支持分页？
+        if self.respond_to?(:total_entries)
+          pagination_result = {
+            :support? => true,
+            :info     => {
+              :current_page  => self.current_page,                     # 当前页数
+              :total_entries => self.total_entries,                    # 总页数
+              :per_page      => self.per_page,                         # 每页条数
+              :total_pages   => self.total_pages,                      # 总页数
+              :first_page?   => self.current_page == 1,                # 是否是第一页?
+              :last_page?    => self.current_page == self.total_pages, # 最后一页?
+              :next_page     => self.next_page,                        # 下一页
+              :previous_page => self.previous_page                     # 前一页
+            }
+          }
+        else
+          pagination_result = {
+            :support? => false
+          }
         end
 
-        populator_name = [String, Symbol].include?(args.first) ? args.first.to_s : 'mustache_populator'
+        result.merge!(
+          :pagination => pagination_result
+        )
 
-        _fields_filters_options = { :fields_filters => options[:fields_filters] }
-
-        ### 扩展实例的populator ##############################
-        eval <<-END_EVAL
-            self.class_eval do
-              def #{populator_name}
-                return @#{populator_name} if @#{populator_name}.is_a?(::MustacheRender::RenderAble::InstanceMustachePopulator)
-                @#{populator_name} ||= ::MustacheRender::RenderAble::InstanceMustachePopulator.new(
-                  self, #{_fields_filters_options}
-                )
-
-                (MustacheRender::ArrayUtil.init(#{args})).each do |populator_module|
-                  if defined?(populator_module::InstanceMethods) && populator_module::InstanceMethods.is_a?(Module)
-                    @#{populator_name}.send :extend, populator_module::InstanceMethods
-                  end
-                end
-
-                @#{populator_name}
-              end
-            end
-END_EVAL
-
+        result
       end
     end
 
-    module MissingMethods
+    module NilMethods
       def to_mustache options={}
         ::MustacheRender::Mustache::Data.new(
-          :miss? => true
+          :nil? => true
         )
       end
     end
-
   end
 end
 
-::NilClass.send :include, ::MustacheRender::RenderAble::MissingMethods
+if defined?(::NilClass)
+  ::NilClass.send :include, ::MustacheRender::RenderAble::NilMethods
+end
 
